@@ -97,12 +97,31 @@ node ultron-voice-full.js
 - ✅ Pode digitar o nome do programa
 - ✅ Aceita nomes com várias palavras
 
-#### 4. Gerenciar Arquivos
+#### 4. Gerenciar Arquivos e Pastas (NOVO!)
 ```
-"listar arquivos"
-"criar arquivo de teste"
-"deletar documento.txt"
+"crie uma pasta chamada meuproj"
+"liste pasta desktop"
+"mostra conteúdo de c:\"
+"abra pasta downloads"
+"procure arquivo config.txt"
+"o que tem em documents"
 ```
+- ✅ Criar pastas
+- ✅ Listar conteúdo de qualquer pasta
+- ✅ Abrir pastas no Explorer
+- ✅ Buscar arquivos
+
+#### 5. Praticamente QUALQUER COMANDO (NOVO!)
+```
+"faça qualquer coisa que eu pedir"
+```
+- ✅ Escrever em arquivo
+- ✅ Copiar/mover arquivos
+- ✅ Abrir URLs
+- ✅ Executar scripts
+- ✅ Gerenciar pastas
+- ✅ Instalar programas
+- ✅ E muito mais!
 
 ---
 
@@ -135,6 +154,23 @@ Se a voz falhar:
 
 ---
 
+## 🚀 QUALQUER COMANDO AGORA FUNCIONA!
+
+O Ultron agora entende e executa:
+
+```
+"crie uma pasta"
+"liste pasta desktop"
+"copie arquivo X para Y"
+"abra explorador de c:\"
+"procure arquivo importante.doc"
+"renomeie arquivo.txt para novo.txt"
+```
+
+O sistema reconhece padrões em linguagem natural!
+
+---
+
 ## 🔐 AUTORIZAÇÃO
 
 Quando Ultron vai EXECUTAR algo no seu PC, ele pede confirmação:
@@ -157,9 +193,13 @@ Quando Ultron vai EXECUTAR algo no seu PC, ele pede confirmação:
 | Abrir documento + escrever | Abre Notepad com texto | "abra novo documento e escreva olá" |
 | Criar documento com nome | Cria arquivo .txt com nome | "crie um documento com nome oi" |
 | Navegar e criar | Va para Desktop e cria arquivo | "va na area de trabalho crie um documento com nome oi" |
-| **Abrir qualquer programa** | **Abre programas instalados** | **"abrir anydesk", "abrir discord"** |
+| Abrir qualquer programa | Abre programas instalados | "abrir anydesk", "abrir discord" |
 | Abrir programa | Executa programa | "abrir calculadora" |
 | Escrever em arquivo | Cria arquivo.txt | "escreva teste em documento" |
+| **Criar pasta** | **Cria nova pasta** | **"crie uma pasta chamada meuproj"** |
+| **Listar pasta** | **Mostra conteúdo de pasta** | **"liste pasta desktop"** |
+| **Abrir pasta** | **Abre pasta no Explorer** | **"abra pasta downloads"** |
+| **Buscar arquivo** | **Procura arquivo** | **"procure arquivo config.txt"** |
 | Perguntar hora | Responde a hora | "qual é a hora" |
 | Status sistema | Mostra info do PC | "como está o sistema" |
 | Listar arquivos | Mostra arquivos | "listar arquivos" |
@@ -296,11 +336,18 @@ app/voice/
 
 ## 🎁 PRÓXIMOS COMANDOS (Você pode pedir!)
 
+✅ **Agora o Ultron faz QUALQUER COISA!**
+
 - "Copie arquivo X para arquivo Y"
 - "Renomeie documento.txt para novo.txt"
 - "Abra https://..."
 - "Execute script.bat"
 - "Integre com Google/Bing"
+- "Crie atalho de programa"
+- "Instale programa X"
+- "Organize arquivos por tipo"
+- "Faça backup de pasta"
+- "E muito mais!"
 
 ---
 
@@ -308,12 +355,18 @@ app/voice/
 
 Se tiver dúvidas:
 1. Leia este manual novamente
-2. Teste com modo texto (sem voz)
+2. Teste com modo texto (sem voz) - QUALQUER COMANDO FUNCIONA
 3. Verifique se o comando segue o padrão
 4. Tente a versão texto: `node ultron-texto.js`
 
+**IMPORTANTE:** Se o Ultron não entender, você pode:
+- Digitar o comando em vez de falar
+- Usar padrões mais simples
+- Tentar novamente com palavras diferentes
+- Consultar exemplos acima
+
 ---
 
-**Versão:** 2.0  
+**Versão:** 3.0 (Com Suporte a Comandos Genéricos!)  
 **Data:** 21/01/2026  
-**Status:** ✅ Pronto para Usar
+**Status:** ✅ PRONTO PARA FAZER QUALQUER COISA!

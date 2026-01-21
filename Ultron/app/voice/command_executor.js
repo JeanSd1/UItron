@@ -165,10 +165,62 @@ function openURL(url) {
 }
 
 /**
+ * Navegar para uma pasta e executar comando
+ */
+function navigateAndExecute(directory, command) {
+  try {
+    // Mudar para o diretório
+    process.chdir(directory);
+    
+    // Re-parsear o comando no novo diretório
+    const parsed = parseCommand(command);
+    
+    if (!parsed) {
+      return `Não consegui entender o comando: "${command}"`;
+    }
+    
+    // Executar a ação usando executeCommand
+    return executeCommand(parsed);
+  } catch (error) {
+    return `Erro ao navegar para ${directory}: ${error.message}`;
+  }
+}
+
+/**
  * Processar comando natural e converter para ação
  */
 function parseCommand(input) {
   const lowerInput = input.toLowerCase();
+  
+  // ============================================================
+  // PRIORIDADE -1: Ir para área de trabalho e criar documento
+  // ============================================================
+  // "va na area de trabalho crie um documento com nome oi"
+  // "vá para área de trabalho e crie arquivo chamado X"
+  
+  if ((lowerInput.includes('va') || lowerInput.includes('vá')) && 
+      (lowerInput.includes('area de trabalho') || lowerInput.includes('área de trabalho') ||
+       lowerInput.includes('desktop'))) {
+    
+    // Extrair o que vem DEPOIS de "area de trabalho"
+    const afterDesktop = input.match(/(?:area de trabalho|área de trabalho|desktop)\s+(.+)/i);
+    
+    if (afterDesktop) {
+      const remainingCommand = afterDesktop[1].trim();
+      
+      // Se tem "crie" ou "criar" depois, processar recursivamente
+      if (remainingCommand.match(/^(crie|criar|novo)/i)) {
+        // Navegar para Desktop e executar o restante do comando
+        return {
+          action: 'navigateAndExecute',
+          params: [
+            path.join(require('os').homedir(), 'Desktop'),
+            remainingCommand
+          ]
+        };
+      }
+    }
+  }
   
   // ============================================================
   // PRIORIDADE 0: Criar arquivo com nome específico
@@ -355,6 +407,8 @@ function executeAction(action, params) {
       return listFiles(...params);
     case 'openURL':
       return openURL(...params);
+    case 'navigateAndExecute':
+      return navigateAndExecute(...params);
     default:
       return 'Ação não reconhecida.';
   }
@@ -371,5 +425,6 @@ module.exports = {
   copyFile,
   listFiles,
   openURL,
+  navigateAndExecute,
   executePowerShellCommand
 };

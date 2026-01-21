@@ -49,17 +49,17 @@ async function captureVoiceImproved() {
           \\$grammar = New-Object System.Speech.Recognition.DictationGrammar;
           \\$recognizer.LoadGrammar(\\$grammar);
           
-          # Configurar TIMEOUTS LONGOS - deixa ouvir mais tempo
-          \\$recognizer.InitialSilenceTimeout = 3000;        # Espera 3s antes de começar
-          \\$recognizer.BabbleTimeout = 1000;               # Permite ruído
-          \\$recognizer.EndSilenceTimeout = 2000;           # Espera 2s após a fala
-          \\$recognizer.EndSilenceTimeoutAmbiguous = 2500;
+          # Configurar TIMEOUTS OTIMIZADOS - deixa ouvir mais tempo
+          \\$recognizer.InitialSilenceTimeout = 5000;        # Espera 5s antes de começar
+          \\$recognizer.BabbleTimeout = 2000;               # Permite mais ruído
+          \\$recognizer.EndSilenceTimeout = 3000;           # Espera 3s após a fala
+          \\$recognizer.EndSilenceTimeoutAmbiguous = 3500;  # Mais tempo para ambíguo
           
           # Usar microfone padrão
           \\$recognizer.SetInputToDefaultAudioDevice();
           
-          # RECONHECER POR ATÉ 30 SEGUNDOS (antes era 15)
-          \\$result = \\$recognizer.Recognize(30000);
+          # RECONHECER POR ATÉ 45 SEGUNDOS (antes era 30)
+          \\$result = \\$recognizer.Recognize(45000);
           
           if (\\$result -and \\$result.Text) {
               Write-Output \\$result.Text;
@@ -81,7 +81,7 @@ async function captureVoiceImproved() {
         '-File', scriptFile
       ], {
         encoding: 'utf-8',
-        timeout: 35000,  // Aumentado de 20s para 35s
+        timeout: 50000,  // Aumentado de 35s para 50s
         stdio: ['pipe', 'pipe', 'pipe']
       });
       

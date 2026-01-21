@@ -170,39 +170,40 @@ function openURL(url) {
 function parseCommand(input) {
   const lowerInput = input.toLowerCase();
   
-  // **NOVO: Abrir notepad com texto inline**
-  // "abra novo documento de texto e escreve olá mundo"
-  if ((lowerInput.includes('abra') || lowerInput.includes('abrir')) && 
-      lowerInput.includes('documento') && 
-      lowerInput.includes('escreve')) {
+  // ============================================================
+  // PRIORIDADE 1: Abrir documento COM TEXTO
+  // ============================================================
+  // "abra novo documento e escrava X"
+  // "crie arquivo e escreve X"  
+  // Deve SER CHECADO PRIMEIRO para não conflitar com "abra programa"
+  
+  if ((lowerInput.includes('documento') || lowerInput.includes('arquivo')) &&
+      (lowerInput.includes('escreva') || lowerInput.includes('escreve'))) {
     
-    const textMatch = input.match(/escreve\s+(.+)$/i);
+    // Procura os padrões: "escreva X", "escrevo X"
+    let textMatch = input.match(/escreva\s+(.+)(?:\s|$)/i) || 
+                     input.match(/escrevo\s+(.+)(?:\s|$)/i) ||
+                     input.match(/escreve\s+(.+)(?:\s|$)/i);
+    
     if (textMatch) {
       const text = textMatch[1].trim();
-      return {
-        action: 'openNotepadWithText',
-        params: [text]
-      };
+      if (text && text.length > 0) {
+        return {
+          action: 'openNotepadWithText',
+          params: [text]
+        };
+      }
     }
   }
   
-  // Abrir notepad com texto
-  if (lowerInput.includes('abra') && lowerInput.includes('documento') && lowerInput.includes('texto')) {
-    // Extrair texto se houver
-    const match = input.match(/escreve?\s+(.+)/i) || input.match(/com\s+(.+)/i);
-    const text = match ? match[1].trim() : '';
-    
-    if (text && text !== 'olá mundo') {
-      return {
-        action: 'openNotepadWithText',
-        params: [text]
-      };
-    }
-  }
+  // ============================================================
+  // PRIORIDADE 2: Escrever em arquivo específico
+  // ============================================================
+  // "escreva X em arquivo Y"
+  // "escreva olá mundo em documento"
   
-  // "escreva olá mundo em arquivo"
-  if (lowerInput.includes('escreva') || lowerInput.includes('escrever')) {
-    const textMatch = input.match(/escreva\s+(.+?)\s+em/i) || input.match(/escrever\s+(.+?)\s+em/i);
+  if ((lowerInput.includes('escreva') || lowerInput.includes('escrever')) && lowerInput.includes('em')) {
+    const textMatch = input.match(/escreva?\s+(.+?)\s+em/i) || input.match(/escrever\s+(.+?)\s+em/i);
     const fileMatch = input.match(/em\s+(?:arquivo\s+)?(.+?)(?:\s|$)/i);
     
     if (textMatch && fileMatch) {
@@ -214,22 +215,19 @@ function parseCommand(input) {
         params: [filename, text]
       };
     }
-    
-    // Apenas "escreva X" = criar documento
-    if (textMatch) {
-      return {
-        action: 'openNotepadWithText',
-        params: [textMatch[1].trim()]
-      };
-    }
   }
   
-  // Abrir programa
-  if (lowerInput.includes('abra') || lowerInput.includes('abrir')) {
-    // Tenta extrair nome do programa
+  // ============================================================
+  // PRIORIDADE 3: Abrir programa
+  // ============================================================
+  // "abra notepad", "abrir calculadora", etc
+  // MAS NÃO se estiver combinado com "escreve/escreva"
+  
+  if ((lowerInput.includes('abra') || lowerInput.includes('abrir')) && 
+      !lowerInput.includes('escreva') && !lowerInput.includes('escreve')) {
     let program = null;
     
-    // Padrões específicos
+    // Padrões específicos com prioridade
     if (lowerInput.includes('notepad') || lowerInput.includes('documento de texto')) {
       program = 'notepad';
     } else if (lowerInput.includes('word')) {
@@ -242,12 +240,6 @@ function parseCommand(input) {
       program = 'firefox';
     } else if (lowerInput.includes('calculadora') || lowerInput.includes('calc')) {
       program = 'calculadora';
-    } else {
-      // Genérico: pega tudo após "abra" ou "abrir"
-      const programMatch = input.match(/abra?\s+(?:novo\s+)?(?:documento de texto|[\w\s]+?)(?:\s+|$)/i);
-      if (programMatch) {
-        program = programMatch[1].trim();
-      }
     }
     
     if (program) {

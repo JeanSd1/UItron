@@ -52,6 +52,25 @@ node ultron-voice-full.js
 - ✅ Abre no Notepad
 - ✅ Você pode editar e salvar
 
+#### 1.5. **NOVO** - Criar Documento com Nome Específico
+```
+"crie um documento com nome oi"
+"crie arquivo chamado teste"
+"novo documento nomeado meuarquivo"
+```
+- ✅ Cria arquivo .txt com o nome especificado
+- ✅ Abre em uma pasta (Desktop)
+- ✅ Você pode editar
+
+#### 1.6. **NOVO** - Navegar para Área de Trabalho e Criar
+```
+"va na area de trabalho crie um documento com nome oi"
+"vá para área de trabalho e crie arquivo chamado teste"
+```
+- ✅ Navega para Desktop
+- ✅ Cria arquivo lá
+- ✅ Pronto para editar
+
 #### 2. Perguntas Simples (Não Requer Autorização)
 ```
 "qual é a hora"
@@ -109,6 +128,8 @@ Quando Ultron vai EXECUTAR algo no seu PC, ele pede confirmação:
 | Comando | O que faz | Exemplo |
 |---------|----------|---------|
 | Abrir documento + escrever | Abre Notepad com texto | "abra novo documento e escreva olá" |
+| **Criar documento com nome** | **Cria arquivo .txt com nome** | **"crie um documento com nome oi"** |
+| **Navegar e criar** | **Va para Desktop e cria arquivo** | **"va na area de trabalho crie um documento com nome oi"** |
 | Abrir programa | Executa programa | "abrir calculadora" |
 | Escrever em arquivo | Cria arquivo.txt | "escreva teste em documento" |
 | Perguntar hora | Responde a hora | "qual é a hora" |
@@ -124,6 +145,8 @@ Quando Ultron vai EXECUTAR algo no seu PC, ele pede confirmação:
 ✅ **Fale em português claro** - Pronuncia bem
 ✅ **Não grite** - Fale em tom normal
 ✅ **Micro funciona?** - Teste em Configurações > Som
+✅ **NOVO: Você tem 45 segundos para falar** - Tempo aumentado para melhor captura
+✅ **NOVO: Se disser "NÃO CAPTUROU", tente novamente mais devagar**
 
 ---
 
@@ -146,6 +169,7 @@ Ou pressione `Ctrl + C`
 **Solução 1:** Fale mais próximo do microfone
 **Solução 2:** Digite em vez de falar (fallback funciona)
 **Solução 3:** Verifique se o microfone está ativado
+**Solução 4 (NOVO):** Tente falar mais lentamente - temos 45 segundos agora
 
 ### Ultron não executa meu comando
 
@@ -153,6 +177,7 @@ Ou pressione `Ctrl + C`
 - Use padrões simples: `"abra novo documento e escreva olá"`
 - Não tão complexo: "você consegue abrir um documento e escrever nele?"
 - Se ainda não funcionar, use modo texto (digite)
+- **NOVO:** Para criar arquivo com nome, use: `"crie um documento com nome X"`
 
 ### Erro: "não é reconhecido como um comando"
 
@@ -160,6 +185,19 @@ Ou pressione `Ctrl + C`
 ```
 cd "C:\Users\Lugan\OneDrive\Área de Trabalho\Projeto Ultron\Ultron"
 node ultron-voice-full.js
+```
+
+### Quer criar documento na área de trabalho?
+
+**Use o novo comando:**
+```
+"va na area de trabalho crie um documento com nome oi"
+```
+
+Funciona também com:
+```
+"vá para área de trabalho e crie arquivo chamado teste"
+"vá para desktop crie novo documento nomeado exemplo"
 ```
 
 ---

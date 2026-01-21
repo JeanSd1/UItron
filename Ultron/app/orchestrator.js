@@ -1,5 +1,6 @@
 const logger = require("./config/logger");
 const { saveMission } = require("./config/history");
+const checkHealth = require("./missions/check_health");
 
 /**
  * Orchestrator Central do Ultron
@@ -83,12 +84,18 @@ class Orchestrator {
    * Executar plano
    */
   async run(plan) {
-    // Placeholder para execução
-    return {
-      success: true,
-      message: "Plano executado",
-      details: plan
-    };
+    // Router de missões
+    switch (plan.mission) {
+      case "check_health":
+        return await checkHealth();
+      default:
+        // Placeholder para execução padrão
+        return {
+          success: true,
+          message: "Plano executado",
+          details: plan
+        };
+    }
   }
 }
 

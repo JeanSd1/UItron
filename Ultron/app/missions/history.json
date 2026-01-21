@@ -67,5 +67,53 @@
     },
     "status": "executed",
     "timestamp": "2026-01-21T15:20:17.255Z"
+  },
+  {
+    "requestId": "health-check-001",
+    "mission": "check_health",
+    "input": {},
+    "plan": {
+      "mission": "check_health",
+      "steps": [
+        {
+          "step": 1,
+          "action": "validate",
+          "description": "Validar entrada"
+        },
+        {
+          "step": 2,
+          "action": "authorize",
+          "description": "Solicitar autorização"
+        },
+        {
+          "step": 3,
+          "action": "execute",
+          "description": "Executar ação"
+        },
+        {
+          "step": 4,
+          "action": "report",
+          "description": "Reportar resultado"
+        }
+      ],
+      "input": {}
+    },
+    "result": {
+      "timestamp": "2026-01-21T15:25:41.023Z",
+      "cpu": {
+        "cores": 4,
+        "load_1min": 0
+      },
+      "memory": {
+        "used_percent": 54
+      },
+      "disk": "C:       10431537152   118758932480",
+      "status": [
+        "✅ Sistema saudável"
+      ],
+      "recommendations": []
+    },
+    "status": "executed",
+    "timestamp": "2026-01-21T15:25:41.023Z"
   }
 ]

@@ -659,8 +659,8 @@ function parseCommand(input) {
   // Se nenhum padrão específico bater, tenta interpretar genericamente
   
   // Se contém "abra" ou "abrir" + qualquer coisa = tenta como programa
-  if ((lowerInput.includes('abra') || lowerInput.includes('abrir')) && lowerInput.length > 5) {
-    const programMatch = input.match(/(?:abra|abrir)\s+(.+?)(?:\s+$|$)/i);
+  if ((lowerInput.includes('abra') || lowerInput.includes('abrir') || lowerInput.includes('abre')) && lowerInput.length > 5) {
+    const programMatch = input.match(/(?:abra|abrir|abre)\s+(.+?)(?:\s+$|$)/i);
     if (programMatch) {
       let program = programMatch[1].trim();
       // Se tem "o" como artigo no meio, remove (ex: "abra o microsoft" → "microsoft")

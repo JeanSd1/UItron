@@ -1,0 +1,99 @@
+# 🎤 ULTRON - Voice Assistant & Command Executor
+
+Sistema inteligente que executa comandos no seu PC por **voz** ou **texto**.
+
+---
+
+## 🚀 Início Rápido
+
+### Opção 1: Menu Interativo (MAIS FÁCIL!)
+
+```bash
+node rodar-teste.js
+```
+
+Escolha uma opção no menu:
+1. Rodar Ultron (Voice + Text)
+2. Teste rápido do seu comando
+3. Demonstração de comandos
+4. Sair
+
+### Opção 2: Direto no Ultron
+
+```bash
+cd Ultron
+node ultron-voice-full.js
+```
+
+---
+
+## 💬 Como Usar
+
+### Por VOZ (Microfone)
+1. Pressione **ENTER** no terminal
+2. **FALE** seu comando (ex: "abra novo documento de texto e escreva olá mundo")
+3. Digite **sim** quando pedir autorização
+4. Pronto! ✨
+
+### Por TEXTO (Se microfone não funcionar)
+1. Digite o comando direto no terminal
+2. O resto funciona igual!
+
+---
+
+## 📋 Exemplos de Comandos
+
+```
+"abra novo documento de texto e escreva olá mundo"
+"qual é a hora"
+"como está o sistema"
+"abrir calculadora"
+"listar arquivos"
+```
+
+---
+
+## 📚 Documentação
+
+- **[MANUAL_USUARIO.md](MANUAL_USUARIO.md)** - Guia completo de uso
+- **[STATUS_FINAL.txt](STATUS_FINAL.txt)** - Status final do projeto
+- **[Ultron/GUIA_COMANDOS_AVANCADOS.md](Ultron/GUIA_COMANDOS_AVANCADOS.md)** - Todos os comandos
+
+---
+
+## 🔐 Segurança
+
+✅ Cada comando requer autorização (você digita "sim")  
+✅ Bloqueio automático de comandos perigosos  
+✅ Auditoria de todas as ações  
+
+---
+
+## 📁 Estrutura
+
+```
+Projeto Ultron/
+├── rodar-teste.js              ← Menu interativo 🎯
+├── MANUAL_USUARIO.md           ← Guia de uso
+├── STATUS_FINAL.txt            ← Status do projeto
+└── Ultron/
+    ├── ultron-voice-full.js    ← Sistema principal
+    ├── app/voice/              ← Módulos do Ultron
+    └── ...
+```
+
+---
+
+## 🎯 Teste Rápido
+
+Para testar sem falar:
+
+```bash
+node rodar-teste.js
+# Selecione opção 2
+```
+
+---
+
+**Versão:** 2.0  
+**Status:** ✅ Pronto para Uso

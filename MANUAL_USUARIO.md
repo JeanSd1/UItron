@@ -27,6 +27,13 @@ cd "C:\Users\Lugan\OneDrive\Área de Trabalho\Projeto Ultron\Ultron"
 node ultron-voice-full.js
 ```
 
+### ✅ IMPORTANTE: Ultron agora FICA ABERTO!
+
+Após executar um comando, o Ultron **NÃO fecha mais**! Você pode:
+- Executar **quantos comandos quiser** em sequência
+- **Sem precisar reiniciar** `node ultron-voice-full.js`
+- Digitar `sair` para encerrar quando quiser
+
 ### 4. Você verá essa tela:
 
 ```
@@ -135,22 +142,28 @@ Se o Ultron disser **"NÃO CAPTUROU"**, você pode DIGITAR o comando:
 
 ---
 
-## ✅ AGORA TEM FALLBACK INTELIGENTE!
+## ✅ AGORA COM LOOP CONTÍNUO!
 
-Se a voz falhar:
-1. O sistema te pedirá para tentar novamente
-2. Você pode **DIGITAR** em vez de falar
-3. O comando será processado normalmente
-4. Funciona para QUALQUER comando
+✨ **GRANDE NOVIDADE:** O Ultron **NÃO FECHA mais após cada comando!**
 
-**Exemplo:**
+**Antes (versão antiga):**
 ```
-[ENTER para falar ou digite 'sair'] > abrir anydesk
-[PROCESSANDO] "abrir anydesk"
-[AÇÃO AVANÇADA DETECTADA]
-[AUTORIZAR?] sim/não: sim
-✅ Abrindo AnyDesk...
+[Digite comando]
+[Executa]
+[FECHA - Precisa reiniciar]
 ```
+
+**Agora (versão melhorada):**
+```
+[Digite comando 1]
+[Executa]
+[Espera comando 2]
+[Executa]
+[Espera comando 3]
+... E assim por diante!
+```
+
+**Você só digita `sair` para encerrar!**
 
 ---
 
@@ -228,6 +241,8 @@ sair
 ```
 
 Ou pressione `Ctrl + C`
+
+**Diferente do passado:** Você NÃO precisa reiniciar o Ultron entre comandos! Digite vários comandos seguidos.
 
 ---
 
@@ -365,8 +380,13 @@ Se tiver dúvidas:
 - Tentar novamente com palavras diferentes
 - Consultar exemplos acima
 
+**NOVO:** O Ultron agora fica aberto continuamente!
+- Execute quantos comandos quiser
+- Sem fechar após cada tarefa
+- Digite `sair` apenas quando terminar
+
 ---
 
-**Versão:** 3.0 (Com Suporte a Comandos Genéricos!)  
+**Versão:** 3.1 (Com Loop Contínuo!)  
 **Data:** 21/01/2026  
-**Status:** ✅ PRONTO PARA FAZER QUALQUER COISA!
+**Status:** ✅ PRONTO PARA FAZER QUALQUER COISA - E FICA ABERTO!

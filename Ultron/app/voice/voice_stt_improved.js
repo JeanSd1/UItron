@@ -37,51 +37,45 @@ function testMicrophone() {
 async function captureVoiceImproved() {
   return new Promise((resolve) => {
     try {
-      // Script PowerShell MUITO MAIS AGRESSIVO - deixa capturar POR MAIS TEMPO
+      // Script PowerShell - deixa capturar por mais tempo
       const psScript = `
-      [System.Reflection.Assembly]::LoadWithPartialName("System.Speech") | Out-Null;
-      
-      try {
-          # Criar recognizer
-          \\$recognizer = New-Object System.Speech.Recognition.SpeechRecognitionEngine;
-          
-          # Grammar: aceita qualquer coisa
-          \\$grammar = New-Object System.Speech.Recognition.DictationGrammar;
-          \\$recognizer.LoadGrammar(\\$grammar);
-          
-          # Configurar TIMEOUTS OTIMIZADOS - deixa ouvir mais tempo
-          \\$recognizer.InitialSilenceTimeout = 8000;        # Espera 8s antes de começar (mais generoso)
-          \\$recognizer.BabbleTimeout = 3500;               # Permite mais ruído (3.5s)
-          \\$recognizer.EndSilenceTimeout = 5000;           # Espera 5s após a fala (NÃO CORTA RÁPIDO)
-          \\$recognizer.EndSilenceTimeoutAmbiguous = 6000;  # Muito mais tempo para ambíguo (6s)
-          
-          # Usar microfone padrão
-          \\$recognizer.SetInputToDefaultAudioDevice();
-          
-          # RECONHECER POR ATÉ 60 SEGUNDOS (muito mais tempo para falar)
-          \\$result = \\$recognizer.Recognize(60000);
-          
-          if (\\$result -and \\$result.Text) {
-              Write-Output \\$result.Text;
-          } else {
-              Write-Output "";
-          }
-      } catch {
-          Write-Output "";
-      }
-      `;
+[System.Reflection.Assembly]::LoadWithPartialName("System.Speech") | Out-Null;
+
+try {
+    $recognizer = New-Object System.Speech.Recognition.SpeechRecognitionEngine;
+    $grammar = New-Object System.Speech.Recognition.DictationGrammar;
+    $recognizer.LoadGrammar($grammar);
+    
+    # Timeouts generosos para capture melhor
+    $recognizer.InitialSilenceTimeout = 8000;
+    $recognizer.BabbleTimeout = 3500;
+    $recognizer.EndSilenceTimeout = 5000;
+    $recognizer.EndSilenceTimeoutAmbiguous = 6000;
+    
+    $recognizer.SetInputToDefaultAudioDevice();
+    
+    # Reconhecer por até 60 segundos
+    $result = $recognizer.Recognize(60000);
+    
+    if ($result -and $result.Text) {
+        Write-Output $result.Text;
+    }
+} catch {
+    # Silenciosamente falha
+}
+`;
       
       const scriptFile = path.join(__dirname, '.voice_script_improved.ps1');
       fs.writeFileSync(scriptFile, psScript, 'utf8');
       
-      // Executar com timeout MUITO MAIOR para capturar tudo
+      // Executar com timeout generoso
       const result = spawnSync('powershell', [
         '-ExecutionPolicy', 'Bypass',
         '-NoProfile',
         '-File', scriptFile
       ], {
         encoding: 'utf-8',
-        timeout: 65000,  // Aumentado para 65s - deixa o usuário falar bastante
+        timeout: 65000,
         stdio: ['pipe', 'pipe', 'pipe']
       });
       

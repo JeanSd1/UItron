@@ -50,16 +50,16 @@ async function captureVoiceImproved() {
           \\$recognizer.LoadGrammar(\\$grammar);
           
           # Configurar TIMEOUTS OTIMIZADOS - deixa ouvir mais tempo
-          \\$recognizer.InitialSilenceTimeout = 5000;        # Espera 5s antes de começar
-          \\$recognizer.BabbleTimeout = 2000;               # Permite mais ruído
-          \\$recognizer.EndSilenceTimeout = 3000;           # Espera 3s após a fala
-          \\$recognizer.EndSilenceTimeoutAmbiguous = 3500;  # Mais tempo para ambíguo
+          \\$recognizer.InitialSilenceTimeout = 8000;        # Espera 8s antes de começar (mais generoso)
+          \\$recognizer.BabbleTimeout = 3500;               # Permite mais ruído (3.5s)
+          \\$recognizer.EndSilenceTimeout = 5000;           # Espera 5s após a fala (NÃO CORTA RÁPIDO)
+          \\$recognizer.EndSilenceTimeoutAmbiguous = 6000;  # Muito mais tempo para ambíguo (6s)
           
           # Usar microfone padrão
           \\$recognizer.SetInputToDefaultAudioDevice();
           
-          # RECONHECER POR ATÉ 45 SEGUNDOS (antes era 30)
-          \\$result = \\$recognizer.Recognize(45000);
+          # RECONHECER POR ATÉ 60 SEGUNDOS (muito mais tempo para falar)
+          \\$result = \\$recognizer.Recognize(60000);
           
           if (\\$result -and \\$result.Text) {
               Write-Output \\$result.Text;
@@ -74,14 +74,14 @@ async function captureVoiceImproved() {
       const scriptFile = path.join(__dirname, '.voice_script_improved.ps1');
       fs.writeFileSync(scriptFile, psScript, 'utf8');
       
-      // Executar com timeout AINDA MAIOR
+      // Executar com timeout MUITO MAIOR para capturar tudo
       const result = spawnSync('powershell', [
         '-ExecutionPolicy', 'Bypass',
         '-NoProfile',
         '-File', scriptFile
       ], {
         encoding: 'utf-8',
-        timeout: 50000,  // Aumentado de 35s para 50s
+        timeout: 65000,  // Aumentado para 65s - deixa o usuário falar bastante
         stdio: ['pipe', 'pipe', 'pipe']
       });
       

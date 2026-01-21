@@ -46,7 +46,7 @@ async function captureVoiceFromMicrophone() {
     try {
       console.log(`${colors.yellow}🎤 Fale agora...${colors.reset}`);
       
-      // Script PowerShell simples e direto
+      // Script PowerShell com timeouts OTIMIZADOS
       const psScript = `
       Add-Type -AssemblyName System.Speech;
       
@@ -54,7 +54,13 @@ async function captureVoiceFromMicrophone() {
       \$recognizer.LoadGrammar([System.Speech.Recognition.DictationGrammar]::new());
       \$recognizer.SetInputToDefaultAudioDevice();
       
-      \$result = \$recognizer.Recognize(15000);
+      # Timeouts melhorados
+      \$recognizer.InitialSilenceTimeout = 5000;
+      \$recognizer.BabbleTimeout = 2000;
+      \$recognizer.EndSilenceTimeout = 3000;
+      \$recognizer.EndSilenceTimeoutAmbiguous = 3500;
+      
+      \$result = \$recognizer.Recognize(45000);
       
       if (\$result) {
           \$result.Text;
@@ -71,7 +77,7 @@ async function captureVoiceFromMicrophone() {
         '-File', scriptFile
       ], {
         encoding: 'utf-8',
-        timeout: 20000,
+        timeout: 50000,
         stdio: ['pipe', 'pipe', 'pipe']
       });
       
@@ -204,7 +210,7 @@ ${colors.bright}${colors.magenta}╚══════════════�
 ${colors.green}✅ COMO USAR:${colors.reset}
 
   1. Pressione ${colors.bright}ENTER${colors.reset} para ativar o microfone
-  2. ${colors.bright}FALE seu comando${colors.reset}} (até 15 segundos)
+  2. ${colors.bright}FALE seu comando${colors.reset}} (até 45 segundos)
   3. Ultron processa e ${colors.bright}RESPONDE POR VOZ${colors.reset}} 🔊
   4. Se for execução, autorize digitando ${colors.bright}sim${colors.reset}}
 

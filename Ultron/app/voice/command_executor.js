@@ -72,15 +72,31 @@ function openProgram(programName) {
       'firefox': 'firefox.exe',
       'explorer': 'explorer.exe',
       'calculadora': 'calc.exe',
-      'calc': 'calc.exe'
+      'calc': 'calc.exe',
+      'ianydesk': 'ianydesk.exe',
+      'anydesk': 'anydesk.exe',
+      'teamviewer': 'teamviewer.exe',
+      'vscode': 'code.exe',
+      'visual studio': 'devenv.exe',
+      'spotify': 'spotify.exe',
+      'discord': 'discord.exe',
+      'telegram': 'telegram.exe',
+      'edge': 'msedge.exe',
+      'safari': 'safari.exe'
     };
     
-    const program = programMap[programName.toLowerCase()] || programName;
+    const program = programMap[programName.toLowerCase()] || programName + '.exe';
     execSync(`start ${program}`, { stdio: 'pipe' });
     
     return `Abrindo ${programName}...`;
   } catch (error) {
-    return `Erro ao abrir ${programName}: ${error.message}`;
+    // Se falhar com .exe, tenta sem
+    try {
+      execSync(`start ${programName}`, { stdio: 'pipe' });
+      return `Abrindo ${programName}...`;
+    } catch (error2) {
+      return `Erro ao abrir ${programName}. Verifique se está instalado.`;
+    }
   }
 }
 
@@ -321,6 +337,19 @@ function parseCommand(input) {
       program = 'firefox';
     } else if (lowerInput.includes('calculadora') || lowerInput.includes('calc')) {
       program = 'calculadora';
+    } else {
+      // Fallback: extrair nome genérico após "abra" ou "abrir"
+      // "abra ianydesk" → "ianydesk"
+      // "abrir some program" → "some program"
+      const programMatch = input.match(/(?:abra|abrir)\s+(.+?)(?:\s+$|$)/i);
+      if (programMatch) {
+        program = programMatch[1].trim();
+        // Se tem múltiplas palavras, usa como nome (ex: "visual studio")
+        // Senão pega só primeira (ex: "ianydesk")
+        if (!program.includes(' ')) {
+          program = program.split(/\s+/)[0];
+        }
+      }
     }
     
     if (program) {

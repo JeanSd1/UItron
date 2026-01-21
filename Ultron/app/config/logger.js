@@ -11,7 +11,7 @@ function log(level, message, meta = {}) {
     ...meta
   };
 
-  fs.appendFileSync(logFile, JSON.stringify(entry) + "\n");
+  fs.appendFileSync(logFile, JSON.stringify(entry) + "\n", { encoding: "utf8" });
 }
 
 module.exports = {

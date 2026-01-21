@@ -38,8 +38,12 @@ import "./utils/cryptoPolyfill"
 import { initCrashReporting } from "./utils/crashReporting"
 import * as Sentry from "@sentry/react-native"
 
+// Import scheduler (CommonJS, used in parallel with React Native)
+const { startScheduler } = require("./scheduler")
+
 initCrashReporting()
 registerGlobals()
+startScheduler()
 
 export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
 

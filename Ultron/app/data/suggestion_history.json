@@ -1,0 +1,13 @@
+{
+  "suggestions": [
+    {
+      "id": "test-suggestion-1",
+      "mission": "cleanup_system",
+      "confidence": 0.78,
+      "sent_at": "2026-01-21T17:58:44.931Z",
+      "reacted": true,
+      "reaction": "accepted",
+      "reaction_time_minutes": 0
+    }
+  ]
+}

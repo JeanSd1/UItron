@@ -1,0 +1,11 @@
+[
+  {
+    "level": "POLICY",
+    "event_type": "suggestion_policy_decision",
+    "suggestion_id": "SUGGESTION_ID",
+    "decision": "allowed",
+    "policy_name": "POLICY_APPROVED",
+    "has_metrics": true,
+    "has_timestamp": true
+  }
+]

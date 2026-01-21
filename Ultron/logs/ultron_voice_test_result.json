@@ -1,0 +1,14 @@
+{
+  "test_type": "interactive_voice_test",
+  "timestamp": "2026-01-21T19:14:34.245Z",
+  "status": "passed",
+  "stats": {
+    "total_events": 11,
+    "success": 9,
+    "blocked": 2,
+    "errors": 0,
+    "last_event": "2026-01-21T19:14:03.334Z"
+  },
+  "voice_synthesis": "windows_tts",
+  "ready_for_production": true
+}

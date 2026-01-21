@@ -46,16 +46,16 @@ try {
     $grammar = New-Object System.Speech.Recognition.DictationGrammar;
     $recognizer.LoadGrammar($grammar);
     
-    # Timeouts generosos para capture melhor
-    $recognizer.InitialSilenceTimeout = 8000;
-    $recognizer.BabbleTimeout = 3500;
-    $recognizer.EndSilenceTimeout = 5000;
-    $recognizer.EndSilenceTimeoutAmbiguous = 6000;
+    # Timeouts MUITO generosos - NÃO CORTA RÁPIDO
+    $recognizer.InitialSilenceTimeout = 10000;       # Aguarda 10s para começar a falar
+    $recognizer.BabbleTimeout = 5000;                # Tolera 5s de ruído/pausa
+    $recognizer.EndSilenceTimeout = 8000;            # Espera 8s APÓS terminar de falar
+    $recognizer.EndSilenceTimeoutAmbiguous = 10000;  # Muito tempo para ambíguo (10s)
     
     $recognizer.SetInputToDefaultAudioDevice();
     
-    # Reconhecer por até 60 segundos
-    $result = $recognizer.Recognize(60000);
+# Reconhecer por até 90 SEGUNDOS - BASTANTE TEMPO!
+          $result = $recognizer.Recognize(90000);
     
     if ($result -and $result.Text) {
         Write-Output $result.Text;
@@ -68,14 +68,14 @@ try {
       const scriptFile = path.join(__dirname, '.voice_script_improved.ps1');
       fs.writeFileSync(scriptFile, psScript, 'utf8');
       
-      // Executar com timeout generoso
+      // Executar com timeout GENEROSO para capturar tudo
       const result = spawnSync('powershell', [
         '-ExecutionPolicy', 'Bypass',
         '-NoProfile',
         '-File', scriptFile
       ], {
         encoding: 'utf-8',
-        timeout: 65000,
+        timeout: 95000,  // 95 segundos - NÃO CORTA!
         stdio: ['pipe', 'pipe', 'pipe']
       });
       

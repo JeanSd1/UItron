@@ -203,7 +203,7 @@ ${colors.bright}${colors.magenta}╚══════════════�
 ${colors.green}✅ COMO USAR:${colors.reset}
 
   1. Pressione ${colors.bright}ENTER${colors.reset} para ativar o microfone
-  2. ${colors.bright}FALE seu comando${colors.reset}} (até 45 segundos)
+  2. ${colors.bright}FALE seu comando${colors.reset}} (até 90 SEGUNDOS - fale sem pressa!)
   3. Ultron processa e ${colors.bright}RESPONDE POR VOZ${colors.reset}} 🔊
   4. Se for execução, autorize digitando ${colors.bright}sim${colors.reset}}
 

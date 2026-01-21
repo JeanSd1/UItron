@@ -1,11 +1,11 @@
-#!/usr/bin/env node
-
 /**
  * ULTRON - VOZ REAL COM FALLBACK
  * 
  * Você FALA por microfone
  * Se não funcionar, você DIGITA
  * Ultron responde por VOZ sempre
+ * 
+ * ⭐ MANTÉM ABERTO PARA SEMPRE - Sem fechar após comando!
  */
 
 const fs = require('fs');
@@ -15,6 +15,9 @@ const { execSync, spawnSync } = require('child_process');
 const aiCore = require('./app/voice/ultron_ai_core.js');
 const voiceLogger = require('./app/voice/voice_logger_simple');
 const cmdExecutor = require('./app/voice/command_executor.js');
+
+// Interface readline GLOBAL - não fecha entre comandos
+let rl = null;
 
 const colors = {
   reset: '\x1b[0m',
@@ -104,7 +107,7 @@ async function captureVoiceFromMicrophone() {
 }
 
 // ===== PROCESSAR COM IA =====
-async function processWithAI(input) {
+async function processWithAI(input, globalRl) {
   console.log(`${colors.cyan}[PROCESSANDO]${colors.reset} "${input}"\n`);
   
   // Primeiro tenta parsear como comando executável
@@ -114,14 +117,9 @@ async function processWithAI(input) {
     // É um comando que pode ser executado
     console.log(`${colors.yellow}[AÇÃO AVANÇADA DETECTADA]${colors.reset}\n`);
     
-    const rl = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout
-    });
-    
     return new Promise((resolve) => {
-      rl.question(`${colors.bright}[AUTORIZAR?]${colors.reset} sim/não: `, (answer) => {
-        rl.close();
+      globalRl.question(`${colors.bright}[AUTORIZAR?]${colors.reset} sim/não: `, (answer) => {
+        // NÃO fechar readline aqui!
         
         if (answer.toLowerCase() === 'sim' || answer.toLowerCase() === 's') {
           console.log(`${colors.green}[EXECUTANDO COMANDO]${colors.reset}\n`);
@@ -161,14 +159,9 @@ async function processWithAI(input) {
     console.log(`${colors.yellow}[AÇÃO]${colors.reset} ${result.action}`);
     console.log(`${colors.yellow}[COMANDO]${colors.reset} "${input}"\n`);
     
-    const rl = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout
-    });
-    
     return new Promise((resolve) => {
-      rl.question(`${colors.bright}[AUTORIZAR?]${colors.reset} sim/não: `, async (answer) => {
-        rl.close();
+      globalRl.question(`${colors.bright}[AUTORIZAR?]${colors.reset} sim/não: `, async (answer) => {
+        // NÃO fechar readline aqui!
         
         if (answer.toLowerCase() === 'sim' || answer.toLowerCase() === 's') {
           console.log(`${colors.green}[EXECUTANDO]${colors.reset}\n`);
@@ -240,7 +233,7 @@ ${colors.red}❌ PARA SAIR: Digite 'sair'${colors.reset}}
 async function main() {
   showWelcome();
   
-  const rl = readline.createInterface({
+  rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
     terminal: true
@@ -262,7 +255,7 @@ async function main() {
         
         if (voiceInput) {
           console.log(`${colors.green}[VOZ CAPTURADA]${colors.reset} "${voiceInput}"\n`);
-          await processWithAI(voiceInput);
+          await processWithAI(voiceInput, rl);
         } else {
           console.log(`${colors.yellow}[NÃO CAPTUROU]${colors.reset} Tente novamente ou ${colors.bright}DIGITE seu comando${colors.reset}}\n`);
           speak('Não consegui capturar. Tente novamente.');
@@ -270,9 +263,10 @@ async function main() {
       } else {
         // Se digitou algo = PROCESSAR
         console.log('');
-        await processWithAI(input);
+        await processWithAI(input, rl);
       }
       
+      // IMPORTANTE: Voltar ao prompt em vez de fechar!
       prompt();
     });
   };

@@ -37,30 +37,34 @@ function testMicrophone() {
 async function captureVoiceImproved() {
   return new Promise((resolve) => {
     try {
-      // Script PowerShell melhorado
+      // Script PowerShell MUITO MAIS AGRESSIVO - deixa capturar POR MAIS TEMPO
       const psScript = `
-      Add-Type -AssemblyName System.Speech;
-      Add-Type -AssemblyName System.Windows.Forms;
+      [System.Reflection.Assembly]::LoadWithPartialName("System.Speech") | Out-Null;
       
       try {
-          # Criar recognizer em português
-          \$recognizer = New-Object System.Speech.Recognition.SpeechRecognitionEngine;
-          \$recognizer.LoadGrammar([System.Speech.Recognition.DictationGrammar]::new());
+          # Criar recognizer
+          \\$recognizer = New-Object System.Speech.Recognition.SpeechRecognitionEngine;
           
-          # Configurar para português
-          \$recognizer.InitialSilenceTimeout = 5000;
-          \$recognizer.BabbleTimeout = 3000;
-          \$recognizer.EndSilenceTimeout = 1000;
-          \$recognizer.EndSilenceTimeoutAmbiguous = 1500;
+          # Grammar: aceita qualquer coisa
+          \\$grammar = New-Object System.Speech.Recognition.DictationGrammar;
+          \\$recognizer.LoadGrammar(\\$grammar);
+          
+          # Configurar TIMEOUTS LONGOS - deixa ouvir mais tempo
+          \\$recognizer.InitialSilenceTimeout = 3000;        # Espera 3s antes de começar
+          \\$recognizer.BabbleTimeout = 1000;               # Permite ruído
+          \\$recognizer.EndSilenceTimeout = 2000;           # Espera 2s após a fala
+          \\$recognizer.EndSilenceTimeoutAmbiguous = 2500;
           
           # Usar microfone padrão
-          \$recognizer.SetInputToDefaultAudioDevice();
+          \\$recognizer.SetInputToDefaultAudioDevice();
           
-          # Reconhecer por até 15 segundos
-          \$result = \$recognizer.Recognize(15000);
+          # RECONHECER POR ATÉ 30 SEGUNDOS (antes era 15)
+          \\$result = \\$recognizer.Recognize(30000);
           
-          if (\$result) {
-              Write-Output \$result.Text;
+          if (\\$result -and \\$result.Text) {
+              Write-Output \\$result.Text;
+          } else {
+              Write-Output "";
           }
       } catch {
           Write-Output "";
@@ -70,14 +74,14 @@ async function captureVoiceImproved() {
       const scriptFile = path.join(__dirname, '.voice_script_improved.ps1');
       fs.writeFileSync(scriptFile, psScript, 'utf8');
       
-      // Executar com timeout maior
+      // Executar com timeout AINDA MAIOR
       const result = spawnSync('powershell', [
         '-ExecutionPolicy', 'Bypass',
         '-NoProfile',
         '-File', scriptFile
       ], {
         encoding: 'utf-8',
-        timeout: 20000,
+        timeout: 35000,  // Aumentado de 20s para 35s
         stdio: ['pipe', 'pipe', 'pipe']
       });
       
@@ -92,12 +96,11 @@ async function captureVoiceImproved() {
       
       if (result.stdout) {
         const text = result.stdout.trim();
-        if (text && text.length > 2) {
+        if (text && text.length > 0) {
           resolve(text);
           return;
         }
       }
-      
       resolve(null);
     } catch (error) {
       resolve(null);

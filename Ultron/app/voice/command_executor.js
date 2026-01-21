@@ -171,6 +171,35 @@ function parseCommand(input) {
   const lowerInput = input.toLowerCase();
   
   // ============================================================
+  // PRIORIDADE 0: Criar arquivo com nome específico
+  // ============================================================
+  // "crie um documento com nome oi"
+  // "crie arquivo de texto com nome teste"
+  // "criar documento chamado X"
+  
+  if ((lowerInput.includes('crie') || lowerInput.includes('criar') || lowerInput.includes('novo')) &&
+      (lowerInput.includes('documento') || lowerInput.includes('arquivo')) &&
+      (lowerInput.includes('com nome') || lowerInput.includes('chamado') || lowerInput.includes('nomeado'))) {
+    
+    // Procura: "com nome X", "chamado X", "nomeado X"
+    let nameMatch = input.match(/(?:com nome|chamado|nomeado)\s+([^\s,.!?]+)/i);
+    
+    if (nameMatch) {
+      let filename = nameMatch[1].trim();
+      
+      // Adiciona extensão .txt se não tiver
+      if (!filename.includes('.')) {
+        filename += '.txt';
+      }
+      
+      return {
+        action: 'createTextFile',
+        params: [filename, '']  // Arquivo vazio ou com conteúdo padrão
+      };
+    }
+  }
+  
+  // ============================================================
   // PRIORIDADE 1: Abrir documento COM TEXTO
   // ============================================================
   // "abra novo documento e escrava X"

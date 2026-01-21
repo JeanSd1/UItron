@@ -1,6 +1,7 @@
 const logger = require("./config/logger");
 const { saveMission } = require("./config/history");
 const checkHealth = require("./missions/check_health");
+const cleanupSystem = require("./missions/cleanup_system");
 
 /**
  * Orchestrator Central do Ultron
@@ -88,6 +89,8 @@ class Orchestrator {
     switch (plan.mission) {
       case "check_health":
         return await checkHealth();
+      case "cleanup_system":
+        return await cleanupSystem(plan.input || {});
       default:
         // Placeholder para execução padrão
         return {

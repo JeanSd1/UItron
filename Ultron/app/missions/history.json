@@ -115,5 +115,76 @@
     },
     "status": "executed",
     "timestamp": "2026-01-21T15:25:41.023Z"
+  },
+  {
+    "requestId": "cleanup-001",
+    "mission": "cleanup_system",
+    "input": {
+      "dryRun": true
+    },
+    "plan": {
+      "mission": "cleanup_system",
+      "steps": [
+        {
+          "step": 1,
+          "action": "validate",
+          "description": "Validar entrada"
+        },
+        {
+          "step": 2,
+          "action": "authorize",
+          "description": "Solicitar autorização"
+        },
+        {
+          "step": 3,
+          "action": "execute",
+          "description": "Executar ação"
+        },
+        {
+          "step": 4,
+          "action": "report",
+          "description": "Reportar resultado"
+        }
+      ],
+      "input": {
+        "dryRun": true
+      }
+    },
+    "result": {
+      "timestamp": "2026-01-21T15:29:41.474Z",
+      "dryRun": true,
+      "cleaned": [
+        {
+          "location": "System Temp",
+          "path": "C:\\Users\\Lugan\\AppData\\Local\\Temp",
+          "filesRemoved": 63,
+          "sizeFreed": "46.57 MB",
+          "sizeFreedRaw": 48829732
+        },
+        {
+          "location": "Windows Temp",
+          "path": "C:\\Windows\\Temp",
+          "filesRemoved": 61,
+          "sizeFreed": "25.9 MB",
+          "sizeFreedRaw": 27153434
+        },
+        {
+          "location": "User Temp",
+          "path": "C:\\Users\\Lugan\\AppData\\Local\\Temp",
+          "filesRemoved": 63,
+          "sizeFreed": "46.57 MB",
+          "sizeFreedRaw": 48829732
+        }
+      ],
+      "errors": [],
+      "summary": {
+        "totalSize": 124812898,
+        "filesRemoved": 187,
+        "status": "ready_for_approval",
+        "message": "⚠️ Pronto para limpeza: 119.03 MB liberáveis"
+      }
+    },
+    "status": "executed",
+    "timestamp": "2026-01-21T15:29:41.501Z"
   }
 ]

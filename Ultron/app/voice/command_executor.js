@@ -60,7 +60,7 @@ function executePowerShellCommand(command) {
 }
 
 /**
- * Abrir programa específico
+ * Abrir programa específico - COM SUPORTE GENÉRICO
  */
 function openProgram(programName) {
   try {
@@ -82,10 +82,29 @@ function openProgram(programName) {
       'discord': 'discord.exe',
       'telegram': 'telegram.exe',
       'edge': 'msedge.exe',
-      'safari': 'safari.exe'
+      'safari': 'safari.exe',
+      'paint': 'mspaint.exe',
+      'powerpoint': 'powerpnt.exe',
+      'ppt': 'powerpnt.exe',
+      'acrobat': 'acrobat.exe',
+      'pdf': 'acrobat.exe',
+      'photoshop': 'photoshop.exe',
+      'gimp': 'gimp-2.10.exe',
+      'vlc': 'vlc.exe',
+      'itunes': 'itunes.exe',
+      'blender': 'blender.exe'
     };
     
-    const program = programMap[programName.toLowerCase()] || programName + '.exe';
+    // Tenta mapa específico primeiro
+    let program = programMap[programName.toLowerCase()];
+    
+    if (!program) {
+      // Fallback 1: Adiciona .exe
+      program = programName.toLowerCase().includes('.exe') 
+        ? programName 
+        : programName.toLowerCase() + '.exe';
+    }
+    
     execSync(`start ${program}`, { stdio: 'pipe' });
     
     return `Abrindo ${programName}...`;
@@ -95,7 +114,14 @@ function openProgram(programName) {
       execSync(`start ${programName}`, { stdio: 'pipe' });
       return `Abrindo ${programName}...`;
     } catch (error2) {
-      return `Erro ao abrir ${programName}. Verifique se está instalado.`;
+      // Último fallback: tentar via PowerShell com Where-Object
+      try {
+        execSync(`powershell -NoProfile -Command "& {Get-Command ${programName}.exe -ErrorAction SilentlyContinue | % {& \\$_.Source}}"`, 
+          { stdio: 'pipe', timeout: 5000 });
+        return `Abrindo ${programName}...`;
+      } catch (error3) {
+        return `Erro ao abrir ${programName}. Verifique se está instalado.`;
+      }
     }
   }
 }
@@ -172,14 +198,81 @@ function listFiles() {
  */
 function executeGenericCommand(input) {
   try {
+    const lowerInput = input.toLowerCase();
+    
+    // 1. Se parecer um nome de programa (após "abra/execute"), tenta como programa
+    if ((lowerInput.includes('abra') || lowerInput.includes('abrir') || lowerInput.includes('execute')) && 
+        !lowerInput.includes('\\') && !lowerInput.includes('/') && 
+        !lowerInput.includes('-') && !lowerInput.includes('powershell')) {
+      const programMatch = input.match(/(?:abra|abrir|execute)\s+(.+?)$/i);
+      if (programMatch) {
+        try {
+          let prog = programMatch[1].trim();
+          // Remove artigos
+          prog = prog.replace(/\s+o\s+/gi, ' ').replace(/\s+a\s+/gi, ' ').trim();
+          
+          execSync(`start ${prog}`, { stdio: 'pipe', timeout: 5000 });
+          return `Abrindo ${prog}...`;
+        } catch (e) {
+          // Continua para tentar como comando
+        }
+      }
+    }
+    
+    // 2. Se parecer um caminho de arquivo/pasta, tenta operação de arquivo
+    if ((lowerInput.includes('copie') || lowerInput.includes('mova') || 
+         lowerInput.includes('delete') || lowerInput.includes('remove')) && 
+        (lowerInput.includes(' para ') || lowerInput.includes(' em '))) {
+      
+      // Tenta extrair origem e destino
+      const copyMatch = input.match(/(?:copie|copiar)\s+(.+?)\s+para\s+(.+?)$/i);
+      const moveMatch = input.match(/(?:mova|mover)\s+(.+?)\s+para\s+(.+?)$/i);
+      const deleteMatch = input.match(/(?:delete|deletar|remova)\s+(.+?)$/i);
+      
+      if (copyMatch) {
+        try {
+          execSync(`powershell -NoProfile -Command "Copy-Item '${copyMatch[1]}' -Destination '${copyMatch[2]}' -Recurse"`, 
+            { timeout: 15000, stdio: 'pipe' });
+          return `Arquivo copiado de ${copyMatch[1]} para ${copyMatch[2]}`;
+        } catch (e) {
+          return `Erro ao copiar: ${e.message}`;
+        }
+      }
+      
+      if (moveMatch) {
+        try {
+          execSync(`powershell -NoProfile -Command "Move-Item '${moveMatch[1]}' -Destination '${moveMatch[2]}'  -Force"`,
+            { timeout: 15000, stdio: 'pipe' });
+          return `Arquivo movido de ${moveMatch[1]} para ${moveMatch[2]}`;
+        } catch (e) {
+          return `Erro ao mover: ${e.message}`;
+        }
+      }
+      
+      if (deleteMatch) {
+        try {
+          execSync(`powershell -NoProfile -Command "Remove-Item '${deleteMatch[1]}' -Recurse -Force"`,
+            { timeout: 15000, stdio: 'pipe' });
+          return `Arquivo/pasta deletado: ${deleteMatch[1]}`;
+        } catch (e) {
+          return `Erro ao deletar: ${e.message}`;
+        }
+      }
+    }
+    
+    // 3. Comando PowerShell direto
     const result = execSync(`powershell -NoProfile -Command "${input}"`, {
       encoding: 'utf-8',
       timeout: 30000,
-      stdio: ['pipe', 'pipe', 'pipe']
+      stdio: ['pipe', 'pipe', 'pipe'],
+      maxBuffer: 10 * 1024 * 1024  // Aumenta buffer de output
     });
-    return result.trim() || 'Comando executado com sucesso.';
+    
+    const trimmed = result.trim();
+    return trimmed && trimmed.length > 0 ? trimmed : 'Comando executado com sucesso.';
   } catch (error) {
-    return `Erro: ${error.message}`;
+    // Se tudo falhar, mostra erro mas não quebra
+    return `Erro ao executar comando: ${error.message.substring(0, 100)}`;
   }
 }
 
@@ -558,6 +651,55 @@ function parseCommand(input) {
         params: [urlMatch[1]]
       };
     }
+  }
+  
+  // ============================================================
+  // FALLBACK GENÉRICO ULTRA PODEROSO
+  // ============================================================
+  // Se nenhum padrão específico bater, tenta interpretar genericamente
+  
+  // Se contém "abra" ou "abrir" + qualquer coisa = tenta como programa
+  if ((lowerInput.includes('abra') || lowerInput.includes('abrir')) && lowerInput.length > 5) {
+    const programMatch = input.match(/(?:abra|abrir)\s+(.+?)(?:\s+$|$)/i);
+    if (programMatch) {
+      let program = programMatch[1].trim();
+      // Se tem "o" como artigo no meio, remove (ex: "abra o microsoft" → "microsoft")
+      program = program.replace(/\s+o\s+/gi, ' ').trim();
+      
+      if (program && program.length > 0) {
+        return {
+          action: 'openProgram',
+          params: [program]
+        };
+      }
+    }
+  }
+  
+  // Se contém "execute", "rodé", "corra" = tenta como comando PowerShell
+  if ((lowerInput.includes('execute') || lowerInput.includes('rodé') || 
+       lowerInput.includes('roda') || lowerInput.includes('corra')) && lowerInput.length > 8) {
+    const cmdMatch = input.match(/(?:execute|rodé|roda|corra)\s+(.+?)(?:\s+$|$)/i);
+    if (cmdMatch) {
+      const command = cmdMatch[1].trim();
+      if (command && command.length > 0) {
+        return {
+          action: 'executeGenericCommand',
+          params: [command]
+        };
+      }
+    }
+  }
+  
+  // Se contém "copie", "mova", "delete", "renomei" etc = tenta como comando genérico
+  if ((lowerInput.includes('copie') || lowerInput.includes('copiar') ||
+       lowerInput.includes('mova') || lowerInput.includes('mover') ||
+       lowerInput.includes('delete') || lowerInput.includes('deletar') ||
+       lowerInput.includes('renomei') || lowerInput.includes('renomear') ||
+       lowerInput.includes('faça') || lowerInput.includes('fazer'))) {
+    return {
+      action: 'executeGenericCommand',
+      params: [input]
+    };
   }
   
   return null;

@@ -1,0 +1,71 @@
+[
+  {
+    "requestId": "mission-001",
+    "mission": "test_sanity",
+    "input": {
+      "command": "echo test"
+    },
+    "plan": {
+      "mission": "test_sanity",
+      "steps": [
+        {
+          "step": 1,
+          "action": "validate",
+          "description": "Validar entrada"
+        },
+        {
+          "step": 2,
+          "action": "authorize",
+          "description": "Solicitar autorização"
+        },
+        {
+          "step": 3,
+          "action": "execute",
+          "description": "Executar ação"
+        },
+        {
+          "step": 4,
+          "action": "report",
+          "description": "Reportar resultado"
+        }
+      ],
+      "input": {
+        "command": "echo test"
+      }
+    },
+    "result": {
+      "success": true,
+      "message": "Plano executado",
+      "details": {
+        "mission": "test_sanity",
+        "steps": [
+          {
+            "step": 1,
+            "action": "validate",
+            "description": "Validar entrada"
+          },
+          {
+            "step": 2,
+            "action": "authorize",
+            "description": "Solicitar autorização"
+          },
+          {
+            "step": 3,
+            "action": "execute",
+            "description": "Executar ação"
+          },
+          {
+            "step": 4,
+            "action": "report",
+            "description": "Reportar resultado"
+          }
+        ],
+        "input": {
+          "command": "echo test"
+        }
+      }
+    },
+    "status": "executed",
+    "timestamp": "2026-01-21T15:20:17.255Z"
+  }
+]

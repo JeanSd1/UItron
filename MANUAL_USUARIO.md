@@ -87,7 +87,15 @@ node ultron-voice-full.js
 "abrir chrome"
 "abrir word"
 "abrir excel"
+"abrar discord"
+"abrir spotify"
+"abrir anydesk"
+"abrir visual studio"
+"abrir ianydesk"
 ```
+- ✅ Suporta qualquer programa instalado
+- ✅ Pode digitar o nome do programa
+- ✅ Aceita nomes com várias palavras
 
 #### 4. Gerenciar Arquivos
 ```
@@ -104,6 +112,25 @@ Se o Ultron disser **"NÃO CAPTUROU"**, você pode DIGITAR o comando:
 
 ```
 [ENTER para falar ou digite 'sair'] > abra novo documento de texto e escreva olá mundo
+```
+
+---
+
+## ✅ AGORA TEM FALLBACK INTELIGENTE!
+
+Se a voz falhar:
+1. O sistema te pedirá para tentar novamente
+2. Você pode **DIGITAR** em vez de falar
+3. O comando será processado normalmente
+4. Funciona para QUALQUER comando
+
+**Exemplo:**
+```
+[ENTER para falar ou digite 'sair'] > abrir anydesk
+[PROCESSANDO] "abrir anydesk"
+[AÇÃO AVANÇADA DETECTADA]
+[AUTORIZAR?] sim/não: sim
+✅ Abrindo AnyDesk...
 ```
 
 ---
@@ -128,8 +155,9 @@ Quando Ultron vai EXECUTAR algo no seu PC, ele pede confirmação:
 | Comando | O que faz | Exemplo |
 |---------|----------|---------|
 | Abrir documento + escrever | Abre Notepad com texto | "abra novo documento e escreva olá" |
-| **Criar documento com nome** | **Cria arquivo .txt com nome** | **"crie um documento com nome oi"** |
-| **Navegar e criar** | **Va para Desktop e cria arquivo** | **"va na area de trabalho crie um documento com nome oi"** |
+| Criar documento com nome | Cria arquivo .txt com nome | "crie um documento com nome oi" |
+| Navegar e criar | Va para Desktop e cria arquivo | "va na area de trabalho crie um documento com nome oi" |
+| **Abrir qualquer programa** | **Abre programas instalados** | **"abrir anydesk", "abrir discord"** |
 | Abrir programa | Executa programa | "abrir calculadora" |
 | Escrever em arquivo | Cria arquivo.txt | "escreva teste em documento" |
 | Perguntar hora | Responde a hora | "qual é a hora" |
@@ -141,12 +169,13 @@ Quando Ultron vai EXECUTAR algo no seu PC, ele pede confirmação:
 ## 🎙️ DICAS DE VOZ
 
 ✅ **Fale naturalmente** - Não precisa ser robótico
-✅ **Minimize ruído** - Feche abas/programas ruidosos
+✅ **Minimize ruído** - Feche abas/programas ruidosas
 ✅ **Fale em português claro** - Pronuncia bem
 ✅ **Não grite** - Fale em tom normal
 ✅ **Micro funciona?** - Teste em Configurações > Som
-✅ **NOVO: Você tem 45 segundos para falar** - Tempo aumentado para melhor captura
-✅ **NOVO: Se disser "NÃO CAPTUROU", tente novamente mais devagar**
+✅ **Você tem 45 segundos para falar** - Tempo aumentado para melhor captura
+✅ **Se disser "NÃO CAPTUROU", tente novamente mais devagar**
+✅ **NOVO: Digite o comando se a voz falhar** - Sistema agora aceita texto como fallback
 
 ---
 
@@ -167,17 +196,24 @@ Ou pressione `Ctrl + C`
 ### "NÃO CAPTUROU - Tente novamente"
 
 **Solução 1:** Fale mais próximo do microfone
-**Solução 2:** Digite em vez de falar (fallback funciona)
+**Solução 2:** Fale mais lentamente e de forma clara
 **Solução 3:** Verifique se o microfone está ativado
-**Solução 4 (NOVO):** Tente falar mais lentamente - temos 45 segundos agora
+**Solução 4:** DIGITE em vez de falar - o sistema aceita texto também!
+**Solução 5:** Tente falar em tom normal (não sussurrando, não gritando)
 
-### Ultron não executa meu comando
+### "Meu comando não foi reconhecido"
 
 **Verifique:**
-- Use padrões simples: `"abra novo documento e escreva olá"`
-- Não tão complexo: "você consegue abrir um documento e escrever nele?"
-- Se ainda não funcionar, use modo texto (digite)
-- **NOVO:** Para criar arquivo com nome, use: `"crie um documento com nome X"`
+1. Use padrões simples:
+   - Para criar documento: `"crie um documento com nome X"`
+   - Para abrir programa: `"abrir [nome do programa]"`
+   - Para fazer pergunta: `"qual é a hora"`
+
+2. Se não funcionar com voz, **DIGITE o mesmo comando**
+
+3. Para programas genéricos, o sistema agora reconhece:
+   - AnyDesk, Discord, Spotify, Visual Studio, TeamViewer, etc
+   - Nomes com várias palavras: "visual studio"
 
 ### Erro: "não é reconhecido como um comando"
 

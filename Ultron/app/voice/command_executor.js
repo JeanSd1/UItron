@@ -168,7 +168,91 @@ function listFiles() {
 }
 
 /**
- * Abrir URL no navegador
+ * Executar comando PowerShell genérico
+ */
+function executeGenericCommand(input) {
+  try {
+    const result = execSync(`powershell -NoProfile -Command "${input}"`, {
+      encoding: 'utf-8',
+      timeout: 30000,
+      stdio: ['pipe', 'pipe', 'pipe']
+    });
+    return result.trim() || 'Comando executado com sucesso.';
+  } catch (error) {
+    return `Erro: ${error.message}`;
+  }
+}
+
+/**
+ * Criar pasta
+ */
+function createFolder(folderName) {
+  try {
+    const folderPath = path.join(process.cwd(), folderName);
+    if (!fs.existsSync(folderPath)) {
+      fs.mkdirSync(folderPath, { recursive: true });
+      return `Pasta "${folderName}" criada com sucesso.`;
+    }
+    return `Pasta "${folderName}" já existe.`;
+  } catch (error) {
+    return `Erro ao criar pasta: ${error.message}`;
+  }
+}
+
+/**
+ * Listar conteúdo de pasta
+ */
+function listFolderContents(folderPath) {
+  try {
+    const fullPath = folderPath.startsWith('/') || folderPath.includes(':') 
+      ? folderPath 
+      : path.join(process.cwd(), folderPath);
+    
+    if (!fs.existsSync(fullPath)) {
+      return `Pasta "${folderPath}" não encontrada.`;
+    }
+    
+    const files = fs.readdirSync(fullPath);
+    return `Conteúdo de "${folderPath}": ${files.join(', ')}`;
+  } catch (error) {
+    return `Erro ao listar pasta: ${error.message}`;
+  }
+}
+
+/**
+ * Abrir arquivo ou pasta no explorer
+ */
+function openInExplorer(pathStr) {
+  try {
+    const fullPath = pathStr.startsWith('/') || pathStr.includes(':') 
+      ? pathStr 
+      : path.join(process.cwd(), pathStr);
+    
+    execSync(`explorer "${fullPath}"`, { stdio: 'pipe' });
+    return `Abrindo ${pathStr} no Explorer...`;
+  } catch (error) {
+    return `Erro ao abrir no Explorer: ${error.message}`;
+  }
+}
+
+/**
+ * Buscar arquivo
+ */
+function searchFile(filename) {
+  try {
+    const cmd = `Get-ChildItem -Path C:\\ -Name "${filename}" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 5`;
+    const result = execSync(`powershell -NoProfile -Command "${cmd}"`, {
+      encoding: 'utf-8',
+      timeout: 15000
+    });
+    return result.trim() || `Arquivo "${filename}" não encontrado.`;
+  } catch (error) {
+    return `Erro ao buscar arquivo: ${error.message}`;
+  }
+}
+
+/**
+ * Abrir URL
  */
 function openURL(url) {
   try {
@@ -393,8 +477,72 @@ function parseCommand(input) {
     }
   }
   
-  // Listar arquivos
-  if (lowerInput.includes('liste') || lowerInput.includes('listar') || lowerInput.includes('mostrar arquivos')) {
+  // ============================================================
+  // NOVOS COMANDOS GENÉRICOS (ANTES de listar arquivos)
+  // ============================================================
+  
+  // Criar pasta
+  // "crie uma pasta chamada X", "criar diretório X"
+  if ((lowerInput.includes('crie') || lowerInput.includes('criar')) && 
+      (lowerInput.includes('pasta') || lowerInput.includes('diretório') || lowerInput.includes('folder'))) {
+    const nameMatch = input.match(/(?:pasta|diretório|folder)\s+(?:chamada|chamado|named)\s+([^\s,.!?]+)/i) ||
+                      input.match(/(?:pasta|diretório|folder)\s+([^\s,.!?]+)/i);
+    if (nameMatch) {
+      return {
+        action: 'createFolder',
+        params: [nameMatch[1].trim()]
+      };
+    }
+  }
+  
+  // Listar conteúdo de pasta específica
+  // "liste pasta X", "mostra conteúdo de X", "o que tem em X"
+  if ((lowerInput.includes('liste') || lowerInput.includes('list') || lowerInput.includes('mostra') || 
+       lowerInput.includes('o que tem') || lowerInput.includes('conteúdo')) && 
+      (lowerInput.includes('pasta') || lowerInput.includes('em') || lowerInput.includes('de') || lowerInput.includes('diretório'))) {
+    const pathMatch = input.match(/(?:em|de|pasta)\s+(.+?)(?:\s+de\s+|,|$)/i) ||
+                      input.match(/conteúdo\s+(?:de|em)\s+(.+?)(?:\s|$)/i) ||
+                      input.match(/liste\s+(.+?)(?:\s|$)/i);
+    if (pathMatch) {
+      return {
+        action: 'listFolderContents',
+        params: [pathMatch[1].trim()]
+      };
+    }
+  }
+  
+  // Abrir em explorer
+  // "abra pasta X", "abre explorer de X", "mostra arquivo em X"
+  if ((lowerInput.includes('abra') || lowerInput.includes('abre') || lowerInput.includes('mostra')) &&
+      (lowerInput.includes('pasta') || lowerInput.includes('explorer') || lowerInput.includes('arquivo'))) {
+    const pathMatch = input.match(/(?:pasta|de|em)\s+(.+?)(?:\s|$)/i) ||
+                      input.match(/explorer\s+(.+?)(?:\s|$)/i);
+    if (pathMatch) {
+      return {
+        action: 'openInExplorer',
+        params: [pathMatch[1].trim()]
+      };
+    }
+  }
+  
+  // Buscar arquivo
+  // "procure arquivo X", "busca arquivo X", "encontre X"
+  if ((lowerInput.includes('procure') || lowerInput.includes('busca') || 
+       lowerInput.includes('encontre') || lowerInput.includes('search')) &&
+      (lowerInput.includes('arquivo') || lowerInput.includes('file'))) {
+    const fileMatch = input.match(/(?:arquivo|file)\s+([^\s,.!?]+)/i) ||
+                      input.match(/(?:procure|busca|encontre|search)\s+(.+?)(?:\s|$)/i);
+    if (fileMatch) {
+      return {
+        action: 'searchFile',
+        params: [fileMatch[1].trim()]
+      };
+    }
+  }
+  
+  // Listar arquivos (SEM especificação = pasta atual)
+  if ((lowerInput.includes('liste') || lowerInput.includes('listar') || lowerInput.includes('mostrar arquivos')) &&
+      !lowerInput.includes('pasta') && !lowerInput.includes('em') && !lowerInput.includes('de')) {
     return {
       action: 'listFiles',
       params: []
@@ -438,6 +586,16 @@ function executeAction(action, params) {
       return openURL(...params);
     case 'navigateAndExecute':
       return navigateAndExecute(...params);
+    case 'createFolder':
+      return createFolder(...params);
+    case 'listFolderContents':
+      return listFolderContents(...params);
+    case 'openInExplorer':
+      return openInExplorer(...params);
+    case 'searchFile':
+      return searchFile(...params);
+    case 'executeGenericCommand':
+      return executeGenericCommand(...params);
     default:
       return 'Ação não reconhecida.';
   }
@@ -455,5 +613,10 @@ module.exports = {
   listFiles,
   openURL,
   navigateAndExecute,
-  executePowerShellCommand
+  executePowerShellCommand,
+  executeGenericCommand,
+  createFolder,
+  listFolderContents,
+  openInExplorer,
+  searchFile
 };

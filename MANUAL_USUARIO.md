@@ -230,8 +230,9 @@ Quando Ultron vai EXECUTAR algo no seu PC, ele pede confirmação:
 ✅ **Fale em português claro** - Pronuncia bem
 ✅ **Não grite** - Fale em tom normal
 ✅ **Micro funciona?** - Teste em Configurações > Som
-✅ **Você tem 60 segundos para falar** - Tempo aumentado MUITO para melhor captura
-✅ **Se disser "NÃO CAPTUROU", tente novamente mais devagar**
+✅ **Você tem 90 SEGUNDOS para falar** - Tempo MUITO generoso!
+✅ **Pode fazer pausas** - O sistema espera 8 segundos de silêncio
+✅ **Se disser "NÃO CAPTUROU", tente novamente**
 ✅ **NOVO: Digite o comando se a voz falhar** - Sistema agora aceita texto como fallback
 ✅ **NOVO: Use qualquer verbo** - "abra", "abre", "abrir", "execute", "roda", "corra"
 
@@ -300,13 +301,17 @@ Funciona também com:
 
 ## 📊 MODO TESTE (Sem Microfone)
 
+Para verificar configuração de timeouts de voz:
+
+```bash
+node teste-timeouts-voz.js
+```
+
 Para testar comandos genéricos:
 
 ```bash
 node teste-comandos-genericos.js
 ```
-
-Mostra 16 tipos diferentes de comandos sendo reconhecidos corretamente!
 
 Para testar seu comando específico:
 

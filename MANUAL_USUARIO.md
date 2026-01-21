@@ -121,13 +121,17 @@ Após executar um comando, o Ultron **NÃO fecha mais**! Você pode:
 #### 5. Praticamente QUALQUER COMANDO (NOVO!)
 ```
 "faça qualquer coisa que eu pedir"
+"execute qualquer comando"
+"abra qualquer programa"
+"faça operações com arquivos"
 ```
 - ✅ Escrever em arquivo
-- ✅ Copiar/mover arquivos
+- ✅ Copiar/mover/deletar arquivos
 - ✅ Abrir URLs
 - ✅ Executar scripts
 - ✅ Gerenciar pastas
 - ✅ Instalar programas
+- ✅ Executar comandos PowerShell
 - ✅ E muito mais!
 
 ---
@@ -226,9 +230,10 @@ Quando Ultron vai EXECUTAR algo no seu PC, ele pede confirmação:
 ✅ **Fale em português claro** - Pronuncia bem
 ✅ **Não grite** - Fale em tom normal
 ✅ **Micro funciona?** - Teste em Configurações > Som
-✅ **Você tem 45 segundos para falar** - Tempo aumentado para melhor captura
+✅ **Você tem 60 segundos para falar** - Tempo aumentado MUITO para melhor captura
 ✅ **Se disser "NÃO CAPTUROU", tente novamente mais devagar**
 ✅ **NOVO: Digite o comando se a voz falhar** - Sistema agora aceita texto como fallback
+✅ **NOVO: Use qualquer verbo** - "abra", "abre", "abrir", "execute", "roda", "corra"
 
 ---
 
@@ -295,13 +300,19 @@ Funciona também com:
 
 ## 📊 MODO TESTE (Sem Microfone)
 
-Para testar sem falar:
+Para testar comandos genéricos:
+
+```bash
+node teste-comandos-genericos.js
+```
+
+Mostra 16 tipos diferentes de comandos sendo reconhecidos corretamente!
+
+Para testar seu comando específico:
 
 ```bash
 node teste-seu-comando.js
 ```
-
-Mostra exatamente o que vai acontecer!
 
 ---
 
@@ -387,6 +398,6 @@ Se tiver dúvidas:
 
 ---
 
-**Versão:** 3.1 (Com Loop Contínuo!)  
+**Versão:** 3.2 (Com suporte genérico total!)  
 **Data:** 21/01/2026  
-**Status:** ✅ PRONTO PARA FAZER QUALQUER COISA - E FICA ABERTO!
+**Status:** ✅ PRONTO PARA FAZER ABSOLUTAMENTE QUALQUER COISA - E FICA ABERTO!

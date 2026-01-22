@@ -1,7 +1,7 @@
 /**
  * INTENT PARSER — Camada de Intenção Profissional
  * 3 camadas: FILTRO → NORMALIZAÇÃO → INTENÇÃO
- * Sem ruído, sem spam, sem gambiarra
+ * Suporta 50+ comandos diferentes
  */
 
 // =========== CAMADA 1: VALIDAÇÃO DE FRASE ===========
@@ -134,7 +134,7 @@ function interpretarComando(texto) {
     };
   }
 
-  // 🔍 PESQUISA GOOGLE (REGEX FORTE)
+  // 🔍 PESQUISA GOOGLE
   if (/pesquise|pesquisa|pesquisar|procure/.test(t)) {
     const query = t
       .replace(/pesquise|pesquisa|pesquisar|procure|no google|google/gi, "")
@@ -159,8 +159,10 @@ function interpretarComando(texto) {
     };
   }
 
-  // 🌐 NAVEGADOR (Chrome/Edge) — REGEX FORTE
-  if (/abra.*chrome|chrome$|google\s+chrome|navegador|abra.*navegador/.test(t)) {
+  // ============ APPS POPULARES ============
+
+  // 🌐 NAVEGADOR (Chrome/Edge)
+  if (/abra.*chrome|chrome$|google\s+chrome|navegador|abra.*navegador|abra.*google$/.test(t)) {
     return {
       type: "pipeline",
       descricao: "Abrir Chrome",
@@ -171,7 +173,7 @@ function interpretarComando(texto) {
   }
 
   // 🧮 CALCULADORA
-  if (/calculadora|abra.*calc|calc$/.test(t)) {
+  if (/calculadora|calc$|abra.*calc|abrir.*calc/.test(t)) {
     return {
       type: "pipeline",
       descricao: "Abrir Calculadora",
@@ -181,8 +183,8 @@ function interpretarComando(texto) {
     };
   }
 
-  // 📝 NOTEPAD
-  if (/notepad|bloco|editor|abra.*texto|abra.*bloco/.test(t)) {
+  // 📝 NOTEPAD / BLOCO DE NOTAS
+  if (/notepad|bloco|editor|texto|documento|novo\s+documento|abra.*bloco|abrir.*bloco|abrir.*notepad|abrir.*texto/.test(t)) {
     return {
       type: "pipeline",
       descricao: "Abrir Notepad",
@@ -192,8 +194,8 @@ function interpretarComando(texto) {
     };
   }
 
-  // 📁 EXPLORADOR
-  if (/explorador|explorer|abra.*pastas|abra.*arquivos/.test(t)) {
+  // 📁 EXPLORADOR DE ARQUIVOS
+  if (/explorador|explorer|abra.*pastas|abra.*arquivos|gerenciador.*arquivos|abrir.*pasta|abrir.*arquivo/.test(t)) {
     return {
       type: "pipeline",
       descricao: "Abrir Explorador",
@@ -203,8 +205,19 @@ function interpretarComando(texto) {
     };
   }
 
+  // ⚙️ GERENCIADOR DE TAREFAS
+  if (/gerenciador|tarefas|taskmgr|task\s+manager|processo|abrir.*gerenciador|abrir.*tarefas/.test(t)) {
+    return {
+      type: "pipeline",
+      descricao: "Abrir Gerenciador de Tarefas",
+      steps: [
+        { action: "open_app", app: "taskmgr" }
+      ]
+    };
+  }
+
   // 🎮 DISCORD
-  if (/discord|abra.*discord/.test(t)) {
+  if (/discord|abra.*discord|abrir.*discord/.test(t)) {
     return {
       type: "pipeline",
       descricao: "Abrir Discord",
@@ -215,7 +228,7 @@ function interpretarComando(texto) {
   }
 
   // 💬 TELEGRAM
-  if (/telegram|abra.*telegram/.test(t)) {
+  if (/telegram|abra.*telegram|abrir.*telegram/.test(t)) {
     return {
       type: "pipeline",
       descricao: "Abrir Telegram",
@@ -225,8 +238,8 @@ function interpretarComando(texto) {
     };
   }
 
-  // 🎬 OBS (Streaming)
-  if (/obs|abra.*obs/.test(t)) {
+  // 🎬 OBS STUDIO
+  if (/obs|abra.*obs|abrir.*obs|transmissao|streaming/.test(t)) {
     return {
       type: "pipeline",
       descricao: "Abrir OBS Studio",
@@ -236,8 +249,8 @@ function interpretarComando(texto) {
     };
   }
 
-  // 💻 VSCODE
-  if (/vscode|visual\s+studio|abra.*code/.test(t)) {
+  // 💻 VS CODE
+  if (/vscode|visual\s+studio|code|editor|abra.*code|abrir.*code|abra.*vscode|abrir.*vscode/.test(t)) {
     return {
       type: "pipeline",
       descricao: "Abrir VS Code",
@@ -248,12 +261,177 @@ function interpretarComando(texto) {
   }
 
   // 🎵 SPOTIFY
-  if (/spotify|abra.*spotify/.test(t)) {
+  if (/spotify|musica|abra.*spotify|abrir.*spotify/.test(t)) {
     return {
       type: "pipeline",
       descricao: "Abrir Spotify",
       steps: [
         { action: "open_app", app: "spotify" }
+      ]
+    };
+  }
+
+  // 📺 NETFLIX
+  if (/netflix|filme|serie|abra.*netflix|abrir.*netflix/.test(t)) {
+    return {
+      type: "pipeline",
+      descricao: "Abrir Netflix",
+      steps: [
+        { action: "navigate", url: "https://www.netflix.com" }
+      ]
+    };
+  }
+
+  // 📧 GMAIL
+  if (/gmail|email|mail|abra.*gmail|abrir.*gmail|abra.*email/.test(t)) {
+    return {
+      type: "pipeline",
+      descricao: "Abrir Gmail",
+      steps: [
+        { action: "navigate", url: "https://mail.google.com" }
+      ]
+    };
+  }
+
+  // 📅 CALENDÁRIO
+  if (/calendario|calendar|agenda|data|abra.*calendario|abrir.*calendario|google.*calendario/.test(t)) {
+    return {
+      type: "pipeline",
+      descricao: "Abrir Google Calendário",
+      steps: [
+        { action: "navigate", url: "https://calendar.google.com" }
+      ]
+    };
+  }
+
+  // 📷 CÂMERA / FOTOS
+  if (/camera|foto|video|abra.*camera|abrir.*camera|fotos/.test(t)) {
+    return {
+      type: "pipeline",
+      descricao: "Abrir Câmera",
+      steps: [
+        { action: "open_app", app: "camera" }
+      ]
+    };
+  }
+
+  // 🎵 WINDOWS MEDIA PLAYER
+  if (/media\s+player|wmplayer|abra.*media|abrir.*media|reprodutor/.test(t)) {
+    return {
+      type: "pipeline",
+      descricao: "Abrir Windows Media Player",
+      steps: [
+        { action: "open_app", app: "wmplayer" }
+      ]
+    };
+  }
+
+  // 🌐 EDGE (NAVEGADOR ALTERNATIVO)
+  if (/edge|msedge|microsoft\s+edge|abra.*edge|abrir.*edge/.test(t)) {
+    return {
+      type: "pipeline",
+      descricao: "Abrir Microsoft Edge",
+      steps: [
+        { action: "open_app", app: "msedge" }
+      ]
+    };
+  }
+
+  // 🔧 CONFIGURAÇÕES
+  if (/configuracao|settings|preferencias|sistema|abra.*config|abrir.*config/.test(t)) {
+    return {
+      type: "pipeline",
+      descricao: "Abrir Configurações do Windows",
+      steps: [
+        { action: "open_app", app: "ms-settings:" }
+      ]
+    };
+  }
+
+  // 🖨️ IMPRESSORAS
+  if (/impressora|printer|abra.*impressora|abrir.*impressora/.test(t)) {
+    return {
+      type: "pipeline",
+      descricao: "Abrir Impressoras",
+      steps: [
+        { action: "open_app", app: "control printers" }
+      ]
+    };
+  }
+
+  // 🔧 PAINEL DE CONTROLE
+  if (/painel.*controle|control\s+panel|painel|abra.*painel|abrir.*painel/.test(t)) {
+    return {
+      type: "pipeline",
+      descricao: "Abrir Painel de Controle",
+      steps: [
+        { action: "open_app", app: "control" }
+      ]
+    };
+  }
+
+  // 🕐 RELÓGIO / ALARME
+  if (/relogio|alarme|temporizador|timer|clock|abra.*relogio|abrir.*alarme/.test(t)) {
+    return {
+      type: "pipeline",
+      descricao: "Abrir Relógio",
+      steps: [
+        { action: "open_app", app: "clock" }
+      ]
+    };
+  }
+
+  // 🎨 PAINT
+  if (/paint|desenho|abra.*paint|abrir.*paint/.test(t)) {
+    return {
+      type: "pipeline",
+      descricao: "Abrir Paint",
+      steps: [
+        { action: "open_app", app: "mspaint" }
+      ]
+    };
+  }
+
+  // 💾 WORD / WRITER
+  if (/word|documento|writer|abra.*word|abrir.*word/.test(t)) {
+    return {
+      type: "pipeline",
+      descricao: "Abrir Microsoft Word",
+      steps: [
+        { action: "open_app", app: "winword" }
+      ]
+    };
+  }
+
+  // 📊 EXCEL / CALC
+  if (/excel|planilha|calc|sheet|abra.*excel|abrir.*excel/.test(t)) {
+    return {
+      type: "pipeline",
+      descricao: "Abrir Microsoft Excel",
+      steps: [
+        { action: "open_app", app: "excel" }
+      ]
+    };
+  }
+
+  // 🎬 POWERPOINT
+  if (/powerpoint|apresentacao|slide|ppt|abra.*powerpoint|abrir.*powerpoint/.test(t)) {
+    return {
+      type: "pipeline",
+      descricao: "Abrir PowerPoint",
+      steps: [
+        { action: "open_app", app: "powerpnt" }
+      ]
+    };
+  }
+
+  // 🔒 BLOQUEIO DE TELA
+  if (/bloquear|lock|tela|desligamento|sleep|mode/.test(t)) {
+    return {
+      type: "pipeline",
+      descricao: "Bloquear tela",
+      steps: [
+        { action: "command", cmd: "rundll32.exe user32.dll,LockWorkStation" }
       ]
     };
   }

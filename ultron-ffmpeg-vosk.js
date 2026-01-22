@@ -5,7 +5,7 @@ const path = require("path");
 const vosk = require("vosk");
 const { containsHotword, stripHotword } = require("./app/voice/hotword_listener");
 const { matchIntent } = require("./app/voice/intent_router");
-const commandExecutor = require("./app/voice/command_executor_generic");
+const executor = require("./app/voice/executor_robusto");
 
 // ================= CONFIG =================
 const MICROFONE = "Microfone (2- High Definition Audio Device)";
@@ -70,14 +70,33 @@ function gravarAudio() {
 
 function transcrever() {
   try {
+    if (!fs.existsSync(WAV_PATH)) {
+      throw new Error("Arquivo WAV não encontrado");
+    }
+
+    const stats = fs.statSync(WAV_PATH);
+    if (stats.size < 2000) {
+      console.log("⚠️  Arquivo muito pequeno — microfone silencioso?");
+      return "";
+    }
+
     const buffer = fs.readFileSync(WAV_PATH);
     const rec = new vosk.Recognizer({ model, sampleRate: 16000 });
+    
     rec.acceptWaveform(buffer);
     const result = rec.finalResult();
     rec.free();
-    return result.text || "";
+
+    const text = result.text || result.result?.join("") || "";
+    
+    if (text && text.trim().length > 0) {
+      return text.trim();
+    }
+    
+    return "";
   } catch (e) {
-    throw new Error("Erro na transcrição: " + e.message);
+    console.log("⚠️  Erro na transcrição:", e.message);
+    return "";
   }
 }
 
@@ -101,6 +120,7 @@ function prompt() {
 
         if (!texto || texto.trim() === "") {
           console.log("⚠️  Sem transcrição detectada");
+          console.log("💡 Dica: Fale mais alto ou mais perto do microfone\n");
           return prompt();
         }
 
@@ -120,20 +140,15 @@ function prompt() {
 
         console.log(`🎯 COMANDO ATIVADO: "${command}"`);
         
-        // Intent Router — detecta intenção
-        const intentResult = matchIntent(command);
-
-        console.log("🧠 INTENT DETECTADA:");
-        console.log(intentResult);
-
-        // Executar comando
-        console.log(`\n⚙️  EXECUTANDO: "${command}"\n`);
-        const execResult = commandExecutor.executeCommand(command);
-
-        if (execResult.success) {
-          console.log(`✅ ${execResult.output}\n`);
-        } else {
-          console.log(`❌ ${execResult.output}\n`);
+        // REGRA 2: Resposta ANTES da execução
+        console.log(`\n✅ Executando: "${command}"\n`);
+        
+        // REGRA 3: Execução isolada com espera
+        try {
+          const resultado = await executor.executar(command);
+          console.log(`${resultado.sucesso ? "✅" : "❌"} ${resultado.msg}\n`);
+        } catch (e) {
+          console.log(`⚠️  Erro: ${e.message}\n`);
         }
         
       } catch (e) {
@@ -145,7 +160,20 @@ function prompt() {
 
     // TEXTO DIGITADO
     console.log(`✅ Comando digitado: "${input}"`);
-    prompt();
+    
+    // REGRA 2: Resposta ANTES da execução
+    console.log(`⚙️  Processando...\n`);
+    
+    // REGRA 3: Execução isolada
+    (async () => {
+      try {
+        const resultado = await executor.executar(input);
+        console.log(`${resultado.sucesso ? "✅" : "❌"} ${resultado.msg}\n`);
+      } catch (e) {
+        console.log(`⚠️  Erro: ${e.message}\n`);
+      }
+      prompt();
+    })();
   });
 }
 

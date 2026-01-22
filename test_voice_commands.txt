@@ -1,0 +1,7 @@
+qual é o status
+mostrar métricas
+histórico completo
+help
+logs
+status
+sair

@@ -1,0 +1,1294 @@
+[
+  {
+    "requestId": "mission-001",
+    "mission": "test_sanity",
+    "input": {
+      "command": "echo test"
+    },
+    "plan": {
+      "mission": "test_sanity",
+      "steps": [
+        {
+          "step": 1,
+          "action": "validate",
+          "description": "Validar entrada"
+        },
+        {
+          "step": 2,
+          "action": "authorize",
+          "description": "Solicitar autorização"
+        },
+        {
+          "step": 3,
+          "action": "execute",
+          "description": "Executar ação"
+        },
+        {
+          "step": 4,
+          "action": "report",
+          "description": "Reportar resultado"
+        }
+      ],
+      "input": {
+        "command": "echo test"
+      }
+    },
+    "result": {
+      "success": true,
+      "message": "Plano executado",
+      "details": {
+        "mission": "test_sanity",
+        "steps": [
+          {
+            "step": 1,
+            "action": "validate",
+            "description": "Validar entrada"
+          },
+          {
+            "step": 2,
+            "action": "authorize",
+            "description": "Solicitar autorização"
+          },
+          {
+            "step": 3,
+            "action": "execute",
+            "description": "Executar ação"
+          },
+          {
+            "step": 4,
+            "action": "report",
+            "description": "Reportar resultado"
+          }
+        ],
+        "input": {
+          "command": "echo test"
+        }
+      }
+    },
+    "status": "executed",
+    "timestamp": "2026-01-21T15:20:17.255Z"
+  },
+  {
+    "requestId": "health-check-001",
+    "mission": "check_health",
+    "input": {},
+    "plan": {
+      "mission": "check_health",
+      "steps": [
+        {
+          "step": 1,
+          "action": "validate",
+          "description": "Validar entrada"
+        },
+        {
+          "step": 2,
+          "action": "authorize",
+          "description": "Solicitar autorização"
+        },
+        {
+          "step": 3,
+          "action": "execute",
+          "description": "Executar ação"
+        },
+        {
+          "step": 4,
+          "action": "report",
+          "description": "Reportar resultado"
+        }
+      ],
+      "input": {}
+    },
+    "result": {
+      "timestamp": "2026-01-21T15:25:41.023Z",
+      "cpu": {
+        "cores": 4,
+        "load_1min": 0
+      },
+      "memory": {
+        "used_percent": 54
+      },
+      "disk": "C:       10431537152   118758932480",
+      "status": [
+        "✅ Sistema saudável"
+      ],
+      "recommendations": []
+    },
+    "status": "executed",
+    "timestamp": "2026-01-21T15:25:41.023Z"
+  },
+  {
+    "requestId": "cleanup-001",
+    "mission": "cleanup_system",
+    "input": {
+      "dryRun": true
+    },
+    "plan": {
+      "mission": "cleanup_system",
+      "steps": [
+        {
+          "step": 1,
+          "action": "validate",
+          "description": "Validar entrada"
+        },
+        {
+          "step": 2,
+          "action": "authorize",
+          "description": "Solicitar autorização"
+        },
+        {
+          "step": 3,
+          "action": "execute",
+          "description": "Executar ação"
+        },
+        {
+          "step": 4,
+          "action": "report",
+          "description": "Reportar resultado"
+        }
+      ],
+      "input": {
+        "dryRun": true
+      }
+    },
+    "result": {
+      "timestamp": "2026-01-21T15:29:41.474Z",
+      "dryRun": true,
+      "cleaned": [
+        {
+          "location": "System Temp",
+          "path": "C:\\Users\\Lugan\\AppData\\Local\\Temp",
+          "filesRemoved": 63,
+          "sizeFreed": "46.57 MB",
+          "sizeFreedRaw": 48829732
+        },
+        {
+          "location": "Windows Temp",
+          "path": "C:\\Windows\\Temp",
+          "filesRemoved": 61,
+          "sizeFreed": "25.9 MB",
+          "sizeFreedRaw": 27153434
+        },
+        {
+          "location": "User Temp",
+          "path": "C:\\Users\\Lugan\\AppData\\Local\\Temp",
+          "filesRemoved": 63,
+          "sizeFreed": "46.57 MB",
+          "sizeFreedRaw": 48829732
+        }
+      ],
+      "errors": [],
+      "summary": {
+        "totalSize": 124812898,
+        "filesRemoved": 187,
+        "status": "ready_for_approval",
+        "message": "⚠️ Pronto para limpeza: 119.03 MB liberáveis"
+      }
+    },
+    "status": "executed",
+    "timestamp": "2026-01-21T15:29:41.501Z"
+  },
+  {
+    "requestId": "health-1769011620023",
+    "mission": "check_health",
+    "input": {},
+    "plan": {
+      "mission": "check_health",
+      "steps": [
+        {
+          "step": 1,
+          "action": "validate",
+          "description": "Validar entrada"
+        },
+        {
+          "step": 2,
+          "action": "authorize",
+          "description": "Solicitar autorização"
+        },
+        {
+          "step": 3,
+          "action": "execute",
+          "description": "Executar ação"
+        },
+        {
+          "step": 4,
+          "action": "report",
+          "description": "Reportar resultado"
+        }
+      ],
+      "input": {}
+    },
+    "result": {
+      "timestamp": "2026-01-21T16:07:00.183Z",
+      "cpu": {
+        "cores": 4,
+        "load_1min": 0
+      },
+      "memory": {
+        "used_percent": 61
+      },
+      "disk": "C:       10436845568   118758932480",
+      "status": [
+        "✅ Sistema saudável"
+      ],
+      "recommendations": []
+    },
+    "status": "executed",
+    "timestamp": "2026-01-21T16:07:00.183Z"
+  },
+  {
+    "requestId": "health-1769011680023",
+    "mission": "check_health",
+    "input": {},
+    "plan": {
+      "mission": "check_health",
+      "steps": [
+        {
+          "step": 1,
+          "action": "validate",
+          "description": "Validar entrada"
+        },
+        {
+          "step": 2,
+          "action": "authorize",
+          "description": "Solicitar autorização"
+        },
+        {
+          "step": 3,
+          "action": "execute",
+          "description": "Executar ação"
+        },
+        {
+          "step": 4,
+          "action": "report",
+          "description": "Reportar resultado"
+        }
+      ],
+      "input": {}
+    },
+    "result": {
+      "timestamp": "2026-01-21T16:08:00.161Z",
+      "cpu": {
+        "cores": 4,
+        "load_1min": 0
+      },
+      "memory": {
+        "used_percent": 62
+      },
+      "disk": "C:       10436788224   118758932480",
+      "status": [
+        "✅ Sistema saudável"
+      ],
+      "recommendations": []
+    },
+    "status": "executed",
+    "timestamp": "2026-01-21T16:08:00.161Z"
+  },
+  {
+    "requestId": "health-1769011680023",
+    "mission": "check_health",
+    "input": {},
+    "plan": {
+      "mission": "check_health",
+      "steps": [
+        {
+          "step": 1,
+          "action": "validate",
+          "description": "Validar entrada"
+        },
+        {
+          "step": 2,
+          "action": "authorize",
+          "description": "Solicitar autorização"
+        },
+        {
+          "step": 3,
+          "action": "execute",
+          "description": "Executar ação"
+        },
+        {
+          "step": 4,
+          "action": "report",
+          "description": "Reportar resultado"
+        }
+      ],
+      "input": {}
+    },
+    "result": {
+      "timestamp": "2026-01-21T16:08:00.165Z",
+      "cpu": {
+        "cores": 4,
+        "load_1min": 0
+      },
+      "memory": {
+        "used_percent": 62
+      },
+      "disk": "C:       10436788224   118758932480",
+      "status": [
+        "✅ Sistema saudável"
+      ],
+      "recommendations": []
+    },
+    "status": "executed",
+    "timestamp": "2026-01-21T16:08:00.165Z"
+  },
+  {
+    "requestId": "health-1769012160024",
+    "mission": "check_health",
+    "input": {},
+    "plan": {
+      "mission": "check_health",
+      "steps": [
+        {
+          "step": 1,
+          "action": "validate",
+          "description": "Validar entrada"
+        },
+        {
+          "step": 2,
+          "action": "authorize",
+          "description": "Solicitar autorização"
+        },
+        {
+          "step": 3,
+          "action": "execute",
+          "description": "Executar ação"
+        },
+        {
+          "step": 4,
+          "action": "report",
+          "description": "Reportar resultado"
+        }
+      ],
+      "input": {}
+    },
+    "result": {
+      "timestamp": "2026-01-21T16:16:00.174Z",
+      "cpu": {
+        "cores": 4,
+        "load_1min": 0
+      },
+      "memory": {
+        "used_percent": 62
+      },
+      "disk": "C:       10434416640   118758932480",
+      "status": [
+        "✅ Sistema saudável"
+      ],
+      "recommendations": []
+    },
+    "status": "executed",
+    "timestamp": "2026-01-21T16:16:00.174Z"
+  },
+  {
+    "requestId": "health-1769012220023",
+    "mission": "check_health",
+    "input": {},
+    "plan": {
+      "mission": "check_health",
+      "steps": [
+        {
+          "step": 1,
+          "action": "validate",
+          "description": "Validar entrada"
+        },
+        {
+          "step": 2,
+          "action": "authorize",
+          "description": "Solicitar autorização"
+        },
+        {
+          "step": 3,
+          "action": "execute",
+          "description": "Executar ação"
+        },
+        {
+          "step": 4,
+          "action": "report",
+          "description": "Reportar resultado"
+        }
+      ],
+      "input": {}
+    },
+    "result": {
+      "timestamp": "2026-01-21T16:17:00.138Z",
+      "cpu": {
+        "cores": 4,
+        "load_1min": 0
+      },
+      "memory": {
+        "used_percent": 65
+      },
+      "disk": "C:       10410041344   118758932480",
+      "status": [
+        "✅ Sistema saudável"
+      ],
+      "recommendations": []
+    },
+    "status": "executed",
+    "timestamp": "2026-01-21T16:17:00.138Z"
+  },
+  {
+    "requestId": "health-1769012340023",
+    "mission": "check_health",
+    "input": {},
+    "plan": {
+      "mission": "check_health",
+      "steps": [
+        {
+          "step": 1,
+          "action": "validate",
+          "description": "Validar entrada"
+        },
+        {
+          "step": 2,
+          "action": "authorize",
+          "description": "Solicitar autorização"
+        },
+        {
+          "step": 3,
+          "action": "execute",
+          "description": "Executar ação"
+        },
+        {
+          "step": 4,
+          "action": "report",
+          "description": "Reportar resultado"
+        }
+      ],
+      "input": {}
+    },
+    "result": {
+      "timestamp": "2026-01-21T16:19:00.127Z",
+      "cpu": {
+        "cores": 4,
+        "load_1min": 0
+      },
+      "memory": {
+        "used_percent": 61
+      },
+      "disk": "C:       10414718976   118758932480",
+      "status": [
+        "✅ Sistema saudável"
+      ],
+      "recommendations": []
+    },
+    "status": "executed",
+    "timestamp": "2026-01-21T16:19:00.128Z"
+  },
+  {
+    "requestId": "health-1769012400022",
+    "mission": "check_health",
+    "input": {},
+    "plan": {
+      "mission": "check_health",
+      "steps": [
+        {
+          "step": 1,
+          "action": "validate",
+          "description": "Validar entrada"
+        },
+        {
+          "step": 2,
+          "action": "authorize",
+          "description": "Solicitar autorização"
+        },
+        {
+          "step": 3,
+          "action": "execute",
+          "description": "Executar ação"
+        },
+        {
+          "step": 4,
+          "action": "report",
+          "description": "Reportar resultado"
+        }
+      ],
+      "input": {}
+    },
+    "result": {
+      "timestamp": "2026-01-21T16:20:00.131Z",
+      "cpu": {
+        "cores": 4,
+        "load_1min": 0
+      },
+      "memory": {
+        "used_percent": 60
+      },
+      "disk": "C:       10414911488   118758932480",
+      "status": [
+        "✅ Sistema saudável"
+      ],
+      "recommendations": []
+    },
+    "status": "executed",
+    "timestamp": "2026-01-21T16:20:00.131Z"
+  },
+  {
+    "requestId": "health-1769012460021",
+    "mission": "check_health",
+    "input": {},
+    "plan": {
+      "mission": "check_health",
+      "steps": [
+        {
+          "step": 1,
+          "action": "validate",
+          "description": "Validar entrada"
+        },
+        {
+          "step": 2,
+          "action": "authorize",
+          "description": "Solicitar autorização"
+        },
+        {
+          "step": 3,
+          "action": "execute",
+          "description": "Executar ação"
+        },
+        {
+          "step": 4,
+          "action": "report",
+          "description": "Reportar resultado"
+        }
+      ],
+      "input": {}
+    },
+    "result": {
+      "timestamp": "2026-01-21T16:21:00.141Z",
+      "cpu": {
+        "cores": 4,
+        "load_1min": 0
+      },
+      "memory": {
+        "used_percent": 56
+      },
+      "disk": "C:       10414612480   118758932480",
+      "status": [
+        "✅ Sistema saudável"
+      ],
+      "recommendations": []
+    },
+    "status": "executed",
+    "timestamp": "2026-01-21T16:21:00.141Z"
+  },
+  {
+    "requestId": "health-1769012820029",
+    "mission": "check_health",
+    "input": {},
+    "plan": {
+      "mission": "check_health",
+      "steps": [
+        {
+          "step": 1,
+          "action": "validate",
+          "description": "Validar entrada"
+        },
+        {
+          "step": 2,
+          "action": "authorize",
+          "description": "Solicitar autorização"
+        },
+        {
+          "step": 3,
+          "action": "execute",
+          "description": "Executar ação"
+        },
+        {
+          "step": 4,
+          "action": "report",
+          "description": "Reportar resultado"
+        }
+      ],
+      "input": {}
+    },
+    "result": {
+      "timestamp": "2026-01-21T16:27:00.173Z",
+      "cpu": {
+        "cores": 4,
+        "load_1min": 0
+      },
+      "memory": {
+        "used_percent": 61
+      },
+      "disk": "C:       10410328064   118758932480",
+      "status": [
+        "✅ Sistema saudável"
+      ],
+      "recommendations": []
+    },
+    "status": "executed",
+    "timestamp": "2026-01-21T16:27:00.173Z"
+  },
+  {
+    "requestId": "health-1769015520031",
+    "mission": "check_health",
+    "input": {},
+    "plan": {
+      "mission": "check_health",
+      "steps": [
+        {
+          "step": 1,
+          "action": "validate",
+          "description": "Validar entrada"
+        },
+        {
+          "step": 2,
+          "action": "authorize",
+          "description": "Solicitar autorização"
+        },
+        {
+          "step": 3,
+          "action": "execute",
+          "description": "Executar ação"
+        },
+        {
+          "step": 4,
+          "action": "report",
+          "description": "Reportar resultado"
+        }
+      ],
+      "input": {}
+    },
+    "result": {
+      "timestamp": "2026-01-21T17:12:00.352Z",
+      "cpu": {
+        "cores": 4,
+        "load_1min": 0
+      },
+      "memory": {
+        "used_percent": 65
+      },
+      "disk": "C:       10097192960   118758932480",
+      "status": [
+        "✅ Sistema saudável"
+      ],
+      "recommendations": []
+    },
+    "status": "executed",
+    "timestamp": "2026-01-21T17:12:00.352Z"
+  },
+  {
+    "requestId": "health-1769015580033",
+    "mission": "check_health",
+    "input": {},
+    "plan": {
+      "mission": "check_health",
+      "steps": [
+        {
+          "step": 1,
+          "action": "validate",
+          "description": "Validar entrada"
+        },
+        {
+          "step": 2,
+          "action": "authorize",
+          "description": "Solicitar autorização"
+        },
+        {
+          "step": 3,
+          "action": "execute",
+          "description": "Executar ação"
+        },
+        {
+          "step": 4,
+          "action": "report",
+          "description": "Reportar resultado"
+        }
+      ],
+      "input": {}
+    },
+    "result": {
+      "timestamp": "2026-01-21T17:13:00.168Z",
+      "cpu": {
+        "cores": 4,
+        "load_1min": 0
+      },
+      "memory": {
+        "used_percent": 64
+      },
+      "disk": "C:       10096267264   118758932480",
+      "status": [
+        "✅ Sistema saudável"
+      ],
+      "recommendations": []
+    },
+    "status": "executed",
+    "timestamp": "2026-01-21T17:13:00.168Z"
+  },
+  {
+    "requestId": "health-1769016120025",
+    "mission": "check_health",
+    "input": {},
+    "plan": {
+      "mission": "check_health",
+      "steps": [
+        {
+          "step": 1,
+          "action": "validate",
+          "description": "Validar entrada"
+        },
+        {
+          "step": 2,
+          "action": "authorize",
+          "description": "Solicitar autorização"
+        },
+        {
+          "step": 3,
+          "action": "execute",
+          "description": "Executar ação"
+        },
+        {
+          "step": 4,
+          "action": "report",
+          "description": "Reportar resultado"
+        }
+      ],
+      "input": {}
+    },
+    "result": {
+      "timestamp": "2026-01-21T17:22:00.178Z",
+      "cpu": {
+        "cores": 4,
+        "load_1min": 0
+      },
+      "memory": {
+        "used_percent": 62
+      },
+      "disk": "C:       10102431744   118758932480",
+      "status": [
+        "✅ Sistema saudável"
+      ],
+      "recommendations": []
+    },
+    "status": "executed",
+    "timestamp": "2026-01-21T17:22:00.178Z"
+  },
+  {
+    "requestId": "health-1769016180026",
+    "mission": "check_health",
+    "input": {},
+    "plan": {
+      "mission": "check_health",
+      "steps": [
+        {
+          "step": 1,
+          "action": "validate",
+          "description": "Validar entrada"
+        },
+        {
+          "step": 2,
+          "action": "authorize",
+          "description": "Solicitar autorização"
+        },
+        {
+          "step": 3,
+          "action": "execute",
+          "description": "Executar ação"
+        },
+        {
+          "step": 4,
+          "action": "report",
+          "description": "Reportar resultado"
+        }
+      ],
+      "input": {}
+    },
+    "result": {
+      "timestamp": "2026-01-21T17:23:00.129Z",
+      "cpu": {
+        "cores": 4,
+        "load_1min": 0
+      },
+      "memory": {
+        "used_percent": 63
+      },
+      "disk": "C:       10101854208   118758932480",
+      "status": [
+        "✅ Sistema saudável"
+      ],
+      "recommendations": []
+    },
+    "status": "executed",
+    "timestamp": "2026-01-21T17:23:00.129Z"
+  },
+  {
+    "requestId": "health-1769017080022",
+    "mission": "check_health",
+    "input": {},
+    "plan": {
+      "mission": "check_health",
+      "steps": [
+        {
+          "step": 1,
+          "action": "validate",
+          "description": "Validar entrada"
+        },
+        {
+          "step": 2,
+          "action": "authorize",
+          "description": "Solicitar autorização"
+        },
+        {
+          "step": 3,
+          "action": "execute",
+          "description": "Executar ação"
+        },
+        {
+          "step": 4,
+          "action": "report",
+          "description": "Reportar resultado"
+        }
+      ],
+      "input": {}
+    },
+    "result": {
+      "timestamp": "2026-01-21T17:38:00.202Z",
+      "cpu": {
+        "cores": 4,
+        "load_1min": 0
+      },
+      "memory": {
+        "used_percent": 67
+      },
+      "disk": "C:       10140454912   118758932480",
+      "status": [
+        "✅ Sistema saudável"
+      ],
+      "recommendations": []
+    },
+    "status": "executed",
+    "timestamp": "2026-01-21T17:38:00.203Z"
+  },
+  {
+    "requestId": "health-1769017140039",
+    "mission": "check_health",
+    "input": {},
+    "plan": {
+      "mission": "check_health",
+      "steps": [
+        {
+          "step": 1,
+          "action": "validate",
+          "description": "Validar entrada"
+        },
+        {
+          "step": 2,
+          "action": "authorize",
+          "description": "Solicitar autorização"
+        },
+        {
+          "step": 3,
+          "action": "execute",
+          "description": "Executar ação"
+        },
+        {
+          "step": 4,
+          "action": "report",
+          "description": "Reportar resultado"
+        }
+      ],
+      "input": {}
+    },
+    "result": {
+      "timestamp": "2026-01-21T17:39:00.146Z",
+      "cpu": {
+        "cores": 4,
+        "load_1min": 0
+      },
+      "memory": {
+        "used_percent": 66
+      },
+      "disk": "C:       10140647424   118758932480",
+      "status": [
+        "✅ Sistema saudável"
+      ],
+      "recommendations": []
+    },
+    "status": "executed",
+    "timestamp": "2026-01-21T17:39:00.146Z"
+  },
+  {
+    "requestId": "health-1769017620073",
+    "mission": "check_health",
+    "input": {},
+    "plan": {
+      "mission": "check_health",
+      "steps": [
+        {
+          "step": 1,
+          "action": "validate",
+          "description": "Validar entrada"
+        },
+        {
+          "step": 2,
+          "action": "authorize",
+          "description": "Solicitar autorização"
+        },
+        {
+          "step": 3,
+          "action": "execute",
+          "description": "Executar ação"
+        },
+        {
+          "step": 4,
+          "action": "report",
+          "description": "Reportar resultado"
+        }
+      ],
+      "input": {}
+    },
+    "result": {
+      "timestamp": "2026-01-21T17:47:00.233Z",
+      "cpu": {
+        "cores": 4,
+        "load_1min": 0
+      },
+      "memory": {
+        "used_percent": 66
+      },
+      "disk": "C:       10139578368   118758932480",
+      "status": [
+        "✅ Sistema saudável"
+      ],
+      "recommendations": []
+    },
+    "status": "executed",
+    "timestamp": "2026-01-21T17:47:00.233Z"
+  },
+  {
+    "requestId": "health-1769017680038",
+    "mission": "check_health",
+    "input": {},
+    "plan": {
+      "mission": "check_health",
+      "steps": [
+        {
+          "step": 1,
+          "action": "validate",
+          "description": "Validar entrada"
+        },
+        {
+          "step": 2,
+          "action": "authorize",
+          "description": "Solicitar autorização"
+        },
+        {
+          "step": 3,
+          "action": "execute",
+          "description": "Executar ação"
+        },
+        {
+          "step": 4,
+          "action": "report",
+          "description": "Reportar resultado"
+        }
+      ],
+      "input": {}
+    },
+    "result": {
+      "timestamp": "2026-01-21T17:48:00.185Z",
+      "cpu": {
+        "cores": 4,
+        "load_1min": 0
+      },
+      "memory": {
+        "used_percent": 68
+      },
+      "disk": "C:       10143068160   118758932480",
+      "status": [
+        "✅ Sistema saudável"
+      ],
+      "recommendations": []
+    },
+    "status": "executed",
+    "timestamp": "2026-01-21T17:48:00.185Z"
+  },
+  {
+    "requestId": "health-1769018820031",
+    "mission": "check_health",
+    "input": {},
+    "plan": {
+      "mission": "check_health",
+      "steps": [
+        {
+          "step": 1,
+          "action": "validate",
+          "description": "Validar entrada"
+        },
+        {
+          "step": 2,
+          "action": "authorize",
+          "description": "Solicitar autorização"
+        },
+        {
+          "step": 3,
+          "action": "execute",
+          "description": "Executar ação"
+        },
+        {
+          "step": 4,
+          "action": "report",
+          "description": "Reportar resultado"
+        }
+      ],
+      "input": {}
+    },
+    "result": {
+      "timestamp": "2026-01-21T18:07:00.177Z",
+      "cpu": {
+        "cores": 4,
+        "load_1min": 0
+      },
+      "memory": {
+        "used_percent": 65
+      },
+      "disk": "C:       10138918912   118758932480",
+      "status": [
+        "✅ Sistema saudável"
+      ],
+      "recommendations": []
+    },
+    "status": "executed",
+    "timestamp": "2026-01-21T18:07:00.178Z"
+  },
+  {
+    "requestId": "health-1769018880033",
+    "mission": "check_health",
+    "input": {},
+    "plan": {
+      "mission": "check_health",
+      "steps": [
+        {
+          "step": 1,
+          "action": "validate",
+          "description": "Validar entrada"
+        },
+        {
+          "step": 2,
+          "action": "authorize",
+          "description": "Solicitar autorização"
+        },
+        {
+          "step": 3,
+          "action": "execute",
+          "description": "Executar ação"
+        },
+        {
+          "step": 4,
+          "action": "report",
+          "description": "Reportar resultado"
+        }
+      ],
+      "input": {}
+    },
+    "result": {
+      "timestamp": "2026-01-21T18:08:00.140Z",
+      "cpu": {
+        "cores": 4,
+        "load_1min": 0
+      },
+      "memory": {
+        "used_percent": 65
+      },
+      "disk": "C:       10139693056   118758932480",
+      "status": [
+        "✅ Sistema saudável"
+      ],
+      "recommendations": []
+    },
+    "status": "executed",
+    "timestamp": "2026-01-21T18:08:00.140Z"
+  },
+  {
+    "requestId": "health-1769018940034",
+    "mission": "check_health",
+    "input": {},
+    "plan": {
+      "mission": "check_health",
+      "steps": [
+        {
+          "step": 1,
+          "action": "validate",
+          "description": "Validar entrada"
+        },
+        {
+          "step": 2,
+          "action": "authorize",
+          "description": "Solicitar autorização"
+        },
+        {
+          "step": 3,
+          "action": "execute",
+          "description": "Executar ação"
+        },
+        {
+          "step": 4,
+          "action": "report",
+          "description": "Reportar resultado"
+        }
+      ],
+      "input": {}
+    },
+    "result": {
+      "timestamp": "2026-01-21T18:09:00.506Z",
+      "cpu": {
+        "cores": 4,
+        "load_1min": 0
+      },
+      "memory": {
+        "used_percent": 65
+      },
+      "disk": "C:       10139680768   118758932480",
+      "status": [
+        "✅ Sistema saudável"
+      ],
+      "recommendations": []
+    },
+    "status": "executed",
+    "timestamp": "2026-01-21T18:09:00.506Z"
+  },
+  {
+    "requestId": "health-1769019000032",
+    "mission": "check_health",
+    "input": {},
+    "plan": {
+      "mission": "check_health",
+      "steps": [
+        {
+          "step": 1,
+          "action": "validate",
+          "description": "Validar entrada"
+        },
+        {
+          "step": 2,
+          "action": "authorize",
+          "description": "Solicitar autorização"
+        },
+        {
+          "step": 3,
+          "action": "execute",
+          "description": "Executar ação"
+        },
+        {
+          "step": 4,
+          "action": "report",
+          "description": "Reportar resultado"
+        }
+      ],
+      "input": {}
+    },
+    "result": {
+      "timestamp": "2026-01-21T18:10:00.141Z",
+      "cpu": {
+        "cores": 4,
+        "load_1min": 0
+      },
+      "memory": {
+        "used_percent": 63
+      },
+      "disk": "C:       10139660288   118758932480",
+      "status": [
+        "✅ Sistema saudável"
+      ],
+      "recommendations": []
+    },
+    "status": "executed",
+    "timestamp": "2026-01-21T18:10:00.142Z"
+  },
+  {
+    "requestId": "health-1769019480019",
+    "mission": "check_health",
+    "input": {},
+    "plan": {
+      "mission": "check_health",
+      "steps": [
+        {
+          "step": 1,
+          "action": "validate",
+          "description": "Validar entrada"
+        },
+        {
+          "step": 2,
+          "action": "authorize",
+          "description": "Solicitar autorização"
+        },
+        {
+          "step": 3,
+          "action": "execute",
+          "description": "Executar ação"
+        },
+        {
+          "step": 4,
+          "action": "report",
+          "description": "Reportar resultado"
+        }
+      ],
+      "input": {}
+    },
+    "result": {
+      "timestamp": "2026-01-21T18:18:00.176Z",
+      "cpu": {
+        "cores": 4,
+        "load_1min": 0
+      },
+      "memory": {
+        "used_percent": 67
+      },
+      "disk": "C:       10138222592   118758932480",
+      "status": [
+        "✅ Sistema saudável"
+      ],
+      "recommendations": []
+    },
+    "status": "executed",
+    "timestamp": "2026-01-21T18:18:00.176Z"
+  },
+  {
+    "requestId": "health-1769019540043",
+    "mission": "check_health",
+    "input": {},
+    "plan": {
+      "mission": "check_health",
+      "steps": [
+        {
+          "step": 1,
+          "action": "validate",
+          "description": "Validar entrada"
+        },
+        {
+          "step": 2,
+          "action": "authorize",
+          "description": "Solicitar autorização"
+        },
+        {
+          "step": 3,
+          "action": "execute",
+          "description": "Executar ação"
+        },
+        {
+          "step": 4,
+          "action": "report",
+          "description": "Reportar resultado"
+        }
+      ],
+      "input": {}
+    },
+    "result": {
+      "timestamp": "2026-01-21T18:19:00.187Z",
+      "cpu": {
+        "cores": 4,
+        "load_1min": 0
+      },
+      "memory": {
+        "used_percent": 66
+      },
+      "disk": "C:       10138116096   118758932480",
+      "status": [
+        "✅ Sistema saudável"
+      ],
+      "recommendations": []
+    },
+    "status": "executed",
+    "timestamp": "2026-01-21T18:19:00.188Z"
+  }
+]

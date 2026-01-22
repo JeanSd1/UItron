@@ -1,0 +1,31 @@
+{
+  "wake_word": "ultron",
+  "push_to_talk": true,
+  "language": "pt-BR",
+  "stt": {
+    "engine": "offline",
+    "confidence_threshold": 0.6
+  },
+  "tts": {
+    "engine": "system",
+    "voice": "neutral",
+    "rate": 1.0
+  },
+  "allowed_intents": [
+    "status",
+    "metrics",
+    "decisions",
+    "history",
+    "explain",
+    "help"
+  ],
+  "blocked_keywords": [
+    "executar",
+    "rodar",
+    "apagar",
+    "deletar",
+    "modificar",
+    "alterar",
+    "forçar"
+  ]
+}

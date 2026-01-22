@@ -36,10 +36,30 @@ console.clear();
 console.log(`
 ╔════════════════════════════════════════════════════════╗
 ║ 🎙️  ULTRON — MODO CONTÍNUO (HOTWORD)                 ║
-║ Diga "Ultron" para ativar (10s window)                ║
+║ Diga "Oi Ultron" para ativar (10s window)             ║
 ║ Modelo PT-BR carregado ✅                             ║
 ╚════════════════════════════════════════════════════════╝
 `);
+
+// ================= DETECTOR HOTWORD (FUZZY) =================
+function detectarHotword(texto) {
+  if (!texto) return false;
+
+  const t = texto.toLowerCase().trim();
+
+  // Palavras-chave que o Vosk gera quando você fala "Oi Ultron"
+  const HOTWORDS = [
+    "ultron",
+    "outro",      // Vosk ouve "ultron" como "outro"
+    "otro",       // Variação
+    "o tron",     // Divisão silábica
+    "oi ultron",  // Exato
+    "oi outro",   // Com "oi"
+    "oi otro",    // Com "oi" + variação
+  ];
+
+  return HOTWORDS.some(h => t.includes(h));
+}
 
 // ================= HANDLER DE VOZ =================
 async function handleSpeech(texto) {
@@ -50,8 +70,8 @@ async function handleSpeech(texto) {
 
   console.log(`📝 Você disse: "${texto}"`);
 
-  // LÓGICA 1: Se disser "Ultron" (independente do estado)
-  if (texto.toLowerCase().includes("ultron")) {
+  // LÓGICA 1: Detecta hotword (fuzzy)
+  if (detectarHotword(texto)) {
     ultronAtivoAte = agora + JANELA_ATIVACAO_MS;
     console.log(`🔓 Ultron ativado por 10 segundos\n`);
     return;
@@ -59,7 +79,7 @@ async function handleSpeech(texto) {
 
   // LÓGICA 2: Se não estiver ativo, ignora
   if (!ativo) {
-    console.log(`🔇 Ultron inativo. Diga "Ultron" para ativar.\n`);
+    console.log(`🔇 Ultron inativo. Diga "Oi Ultron" para ativar.\n`);
     return;
   }
 

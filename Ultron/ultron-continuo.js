@@ -1,21 +1,26 @@
 #!/usr/bin/env node
 /**
- * ULTRON — MODO CONTÍNUO (HOTWORD) - VERSÃO ROBUSTA
- * ✅ FFmpeg stream contínuo (dispositivo padrão)
+ * ULTRON — MODO CONTÍNUO COM JANELA DE ATIVAÇÃO
+ * ✅ FFmpeg stream contínuo
  * ✅ Vosk processando real-time
- * ✅ Reconhece "Oi Ultron" automaticamente
- * ✅ Sem ENTER, sem terminal interativo
- * ✅ Sem hardcode de device (funciona em qualquer Windows)
+ * ✅ Hotword "Ultron" ativa janela de 10 segundos
+ * ✅ Durante a janela: executa qualquer comando SEM repetir hotword
+ * ✅ Após janela: exige "Ultron" novamente
+ * ✅ Profissional e robusto
  */
 
 const { spawn } = require("child_process");
 const fs = require("fs");
 const vosk = require("vosk");
-const { containsHotword, stripHotword } = require("./app/voice/hotword_listener");
 const executor = require("./app/voice/executor_robusto");
 
 // ================= CONFIG =================
 const MODEL_PATH = "./vosk-model";
+const MICROFONE = "Headset (E6S Hands-Free AG Audio)";
+const JANELA_ATIVACAO_MS = 10000; // 10 segundos de janela
+
+// ================= STATE =================
+let ultronAtivoAte = 0; // Timestamp quando Ultron desativa
 
 // ================= VOSK SETUP =================
 if (!fs.existsSync(MODEL_PATH)) {
@@ -31,7 +36,7 @@ console.clear();
 console.log(`
 ╔════════════════════════════════════════════════════════╗
 ║ 🎙️  ULTRON — MODO CONTÍNUO (HOTWORD)                 ║
-║ Diga "Oi Ultron" para ativar                          ║
+║ Diga "Ultron" para ativar (10s window)                ║
 ║ Modelo PT-BR carregado ✅                             ║
 ╚════════════════════════════════════════════════════════╝
 `);
@@ -40,24 +45,29 @@ console.log(`
 async function handleSpeech(texto) {
   if (!texto || texto.trim().length === 0) return;
 
-  console.log(`📝 Transcrição RAW: "${texto}"`);
+  const agora = Date.now();
+  const ativo = agora <= ultronAtivoAte;
 
-  if (!containsHotword(texto)) {
-    console.log("🔇 Hotword não detectada. Diga 'Ultron' para ativar.");
+  console.log(`📝 Você disse: "${texto}"`);
+
+  // LÓGICA 1: Se disser "Ultron" (independente do estado)
+  if (texto.toLowerCase().includes("ultron")) {
+    ultronAtivoAte = agora + JANELA_ATIVACAO_MS;
+    console.log(`🔓 Ultron ativado por 10 segundos\n`);
     return;
   }
 
-  const clean = stripHotword(texto);
-
-  if (!clean) {
-    console.log("⚠️  Nenhum comando após hotword.");
+  // LÓGICA 2: Se não estiver ativo, ignora
+  if (!ativo) {
+    console.log(`🔇 Ultron inativo. Diga "Ultron" para ativar.\n`);
     return;
   }
 
-  console.log(`🎯 COMANDO ATIVADO: "${clean}"`);
+  // LÓGICA 3: Está ativo → EXECUTA o comando
+  console.log(`⏱️  Ultron ativo (${Math.ceil((ultronAtivoAte - agora) / 1000)}s restantes)`);
   
   try {
-    const resultado = await executor.executar(clean);
+    const resultado = await executor.executar(texto);
     console.log(`${resultado.sucesso ? "✅" : "❌"} ${resultado.msg}\n`);
   } catch (e) {
     console.error("[ERRO]", e.message);
@@ -68,11 +78,9 @@ async function handleSpeech(texto) {
 function iniciarStreamContinuo() {
   console.log("🎤 Iniciando escuta contínua...\n");
 
-  // FFmpeg: usar microfone EXATO listado por dshow
-  // Nome obtido via: ffmpeg -list_devices true -f dshow -i dummy
   const ffmpeg = spawn("ffmpeg", [
     "-f", "dshow",
-    "-i", "audio=Headset (E6S Hands-Free AG Audio)",
+    "-i", `audio=${MICROFONE}`,
     "-ar", "16000",
     "-ac", "1",
     "-f", "s16le",
@@ -84,7 +92,6 @@ function iniciarStreamContinuo() {
 
   ffmpeg.on("error", (err) => {
     console.error("❌ FFmpeg erro:", err.message);
-    console.error("💡 Dica: Verifique se FFmpeg está instalado");
     process.exit(1);
   });
 
@@ -100,7 +107,6 @@ function iniciarStreamContinuo() {
     console.log(`🎧 Áudio recebido: ${chunk.length} bytes`);
     
     if (recognizer.acceptWaveform(chunk)) {
-      // Resultado final
       const result = recognizer.result();
       console.log(`🧠 VOSK RESULT:`, result);
       if (result && result.text) {

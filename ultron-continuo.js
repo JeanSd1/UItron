@@ -1,42 +1,110 @@
+#!/usr/bin/env node
 /**
- * ULTRON — MODO CONTÍNUO (5.1.4)
+ * ULTRON — MODO SEMPRE ATIVO (FILA NÃO-BLOQUEANTE)
  * ✅ FFmpeg stream contínuo
  * ✅ Vosk processando real-time
- * ✅ Hotword "oi ultron"
- * ✅ State machine IDLE → AWAKE → PROCESSING
- * ✅ Sem ENTER, sem terminal interativo
+ * ✅ Fila desacoplada de execução
+ * ✅ SEM await, SEM bloqueio, SEM travamento
+ * ✅ Assistente de verdade
  */
 
-const { spawn, execSync } = require("child_process");
+const { spawn } = require("child_process");
 const fs = require("fs");
-const path = require("path");
 const vosk = require("vosk");
-const { containsHotword, stripHotword } = require("./app/voice/hotword_listener");
 const executor = require("./app/voice/executor_robusto");
+const { interpretarComando } = require("./app/voice/intent_parser");
 
 // ================= CONFIG =================
-const MICROFONE = "Headset (E6S Hands-Free AG Audio)";
 const MODEL_PATH = "./vosk-model";
+const MICROFONE = "Headset (E6S Hands-Free AG Audio)";
 
-// ================= STATE MACHINE =================
-let STATE = "IDLE"; // IDLE | AWAKE | PROCESSING
-const STATES = {
-  IDLE: "IDLE",
-  AWAKE: "AWAKE",
-  PROCESSING: "PROCESSING"
-};
+// ================= FILA DE COMANDOS (NÃO-BLOQUEANTE) =================
+const commandQueue = [];
+let executing = false;
 
-// ================= NORMALIZAR COMANDO =================
-function normalizeCommand(text) {
-  return text
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/^outro\s+/g, "")      // "outro" = reconhecimento errado de "ultron"
-    .replace(/^ultron\s+/g, "")     // remove "ultron" se vir correto
-    .replace(/^oi\s+/g, "")         // remove "oi"
-    .replace(/^ultra\s+/g, "")      // variações
-    .trim();
+function enqueueCommand(text) {
+  // Validação rápida
+  if (!isValidCommand(text)) return;
+  
+  // Interpretar intenção
+  const intent = interpretarComando(text);
+  if (!intent) {
+    console.log(`❌ Comando não reconhecido: ${text}`);
+    return;
+  }
+
+  console.log(`📝 Você disse: "${text}"`);
+  console.log(`🎯 Intenção: ${intent.descricao}`);
+  
+  commandQueue.push(intent);
+  processQueue();
+}
+
+function processQueue() {
+  if (executing) return;
+  if (commandQueue.length === 0) return;
+
+  executing = true;
+  const command = commandQueue.shift();
+
+  // Executar sem bloqueio
+  executarComandoAsync(command, () => {
+    executing = false;
+    // Continua fila SEM travar
+    setImmediate(processQueue);
+  });
+}
+
+// ================= EXECUTOR NÃO-BLOQUEANTE =================
+function executarComandoAsync(intent, callback) {
+  // Se é intenção parsed
+  if (intent.type === "url") {
+    spawn("cmd", ["/c", "start", "", intent.value], {
+      detached: true,
+      stdio: "ignore",
+      windowsHide: true
+    }).unref();
+    
+    console.log(`✅ ${intent.descricao}`);
+    callback();
+    return;
+  }
+
+  if (intent.type === "app") {
+    spawn("cmd", ["/c", "start", "", intent.value], {
+      detached: true,
+      stdio: "ignore",
+      windowsHide: true
+    }).unref();
+    
+    console.log(`✅ ${intent.descricao}`);
+    callback();
+    return;
+  }
+
+  // Fallback: trata como comando de texto (executor original)
+  executor.executar(intent.value || intent)
+    .then((resultado) => {
+      console.log(`${resultado.sucesso ? "✅" : "❌"} ${resultado.msg}`);
+      callback();
+    })
+    .catch((err) => {
+      console.error(`❌ Erro: ${err.message}`);
+      callback();
+    });
+}
+
+// ================= FILTROS =================
+function isValidCommand(text) {
+  if (!text) return false;
+  const trimmed = text.trim();
+  if (trimmed.length < 3) return false;
+  
+  // Filtrar ruído comum
+  const RUIDO = ["o", "a", "um", "uma", "e", "ou", "ouu", "aaa", "oo"];
+  if (RUIDO.includes(trimmed)) return false;
+  
+  return true;
 }
 
 // ================= VOSK SETUP =================
@@ -52,66 +120,22 @@ let recognizer = null;
 console.clear();
 console.log(`
 ╔════════════════════════════════════════════════════════╗
-║ 🎙️  ULTRON — MODO CONTÍNUO (HOTWORD)                 ║
-║ Diga "Oi Ultron" para ativar                          ║
+║ 🎙️  ULTRON — SEMPRE ATIVO (FILA DESACOPLADA)       ║
+║ Escutando continuamente...                            ║
 ║ Modelo PT-BR carregado ✅                             ║
+║ Execução paralela não-bloqueante ✅                    ║
 ╚════════════════════════════════════════════════════════╝
 `);
 
-// ================= RESPOSTA POR VOZ =================
-function speak(texto) {
-  try {
-    const cmd = `Add-Type -AssemblyName System.Speech; $speak = New-Object System.Speech.Synthesis.SpeechSynthesizer; $speak.Rate = 0; $speak.Volume = 100; $speak.Speak('${texto.replace(/'/g, "''")}')`;
-    
-    spawn("powershell", ["-NoProfile", "-Command", cmd], {
-      stdio: "ignore",
-      detached: true,
-      windowsHide: true
-    }).unref();
-  } catch (e) {
-    console.error("[SPEAK ERROR]", e.message);
-  }
-}
-
-// ================= HANDLER DE VOZ =================
-async function handleSpeech(texto) {
-  if (!texto || texto.trim().length === 0) return;
-
-  const clean = normalizeCommand(texto);
-  console.log(`📝 Transcrição RAW: "${texto}"`);
-  console.log(`🔧 Comando limpo: "${clean}"`);
-
-  if (clean.length === 0) return;
-
-  // ✅ EXECUTA DIRETO (sem máquina de estados complicada)
-  console.log(`🎯 EXECUTANDO: "${clean}"`);
-  
-  try {
-    const resultado = await executor.executar(clean);
-    console.log(`${resultado.sucesso ? "✅" : "❌"} ${resultado.msg}`);
-    
-    if (resultado.sucesso) {
-      speak("Comando executado.");
-    } else {
-      speak("Erro ao executar o comando.");
-    }
-  } catch (e) {
-    console.error("[EXEC ERROR]", e.message);
-    speak("Erro no sistema.");
-  }
-}
-
 // ================= STREAM CONTÍNUO =================
 function iniciarStreamContinuo() {
-  console.log("🎤 Iniciando escuta contínua...\n");
-
   const ffmpeg = spawn("ffmpeg", [
     "-f", "dshow",
     "-i", `audio=${MICROFONE}`,
     "-ar", "16000",
     "-ac", "1",
     "-f", "s16le",
-    "-"
+    "pipe:1"
   ], {
     stdio: ["ignore", "pipe", "pipe"],
     windowsHide: true
@@ -129,16 +153,14 @@ function iniciarStreamContinuo() {
   // Inicializar Vosk recognizer
   recognizer = new vosk.Recognizer({ model, sampleRate: 16000 });
 
-  // Stream: FFmpeg → Vosk
+  // Stream: FFmpeg → Vosk → Fila
   ffmpeg.stdout.on("data", (chunk) => {
-    console.log(`🎧 Áudio recebido: ${chunk.length} bytes`);
-    
     if (recognizer.acceptWaveform(chunk)) {
       // Resultado final
       const result = recognizer.result();
-      console.log(`🧠 VOSK RESULT:`, result);
       if (result && result.text) {
-        handleSpeech(result.text);
+        // ✅ NÃO bloqueia — apenas enfileira
+        enqueueCommand(result.text);
       }
     }
   });

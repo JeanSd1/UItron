@@ -251,7 +251,7 @@ Este projeto está sob a licença **MIT** — veja [LICENSE](LICENSE) para detal
 
 ## �‍💻 Desenvolvedor
 
-**Desenvolvido por:** [Jean Souza (@JeanSd1)](https://github.com/JeanSd1)
+**Desenvolvido por:** [Jean Durgante (@JeanSd1)](https://github.com/JeanSd1)
 
 - 🔗 GitHub: https://github.com/JeanSd1
 - 🎯 Projeto: [UItron - Voice Assistant for Windows](https://github.com/JeanSd1/UItron)
@@ -273,6 +273,6 @@ GitHub: https://github.com/JeanSd1/UItron/issues
 
 **Ultron agora ouve você — totalmente offline, totalmente seguro** 🦾🎙️
 
-*Desenvolvido com ❤️ para Windows por [Jean Souza](https://github.com/JeanSd1)*
+*Desenvolvido com ❤️ para Windows por [Jean Durgante](https://github.com/JeanSd1)*
 
 </div>

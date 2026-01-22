@@ -1,0 +1,1 @@
+{"timestamp":"2026-01-21T18:36:43.775Z","level":"POLICY","event_type":"suggestion_policy_decision","suggestion_id":"snap-1","mission":"snap_test","policy_name":"POLICY_APPROVED","decision":"allowed","metrics":{"acceptance_rate":1,"ignore_streak":0,"avg_latency_minutes":null,"sample_size":1},"next_allowed_at":null,"audit_correlation":"snap-1-snap_test-POLICY_APPROVED"}

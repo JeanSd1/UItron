@@ -1,0 +1,117 @@
+{"timestamp":"2026-01-21T19:03:24.430Z","level":"INFO","event_type":"voice_listener_init","status":"initializing","hotkey":"CTRL+SHIFT+V"}
+{"timestamp":"2026-01-21T19:03:24.441Z","level":"INFO","event_type":"voice_listener_init","status":"ready","message":"Listening for hotkey: CTRL+SHIFT+V"}
+{"timestamp":"2026-01-21T19:03:24.449Z","level":"INFO","event_type":"voice_recording_start"}
+{"timestamp":"2026-01-21T19:03:24.561Z","level":"INFO","event_type":"voice_recording_stop","status":"failed","reason":"audio_too_short","duration_ms":112}
+{"timestamp":"2026-01-21T19:03:24.563Z","level":"INFO","event_type":"voice_listener_shutdown","status":"complete"}
+{"timestamp":"2026-01-21T19:03:24.564Z","level":"INFO","event_type":"transcriber_init","status":"checking","offline_engine":"whisper-local"}
+{"timestamp":"2026-01-21T19:03:24.565Z","level":"INFO","event_type":"transcriber_init","status":"ready","offline_available":true,"fallback_available":false}
+{"timestamp":"2026-01-21T19:03:24.567Z","level":"INFO","event_type":"transcription_attempt","method":"offline","engine":"whisper-local"}
+{"timestamp":"2026-01-21T19:03:24.569Z","level":"INFO","event_type":"transcription_success","method":"offline","text":"qual é o estado do sistema","confidence":0.95,"processing_time_ms":1}
+{"timestamp":"2026-01-21T19:03:24.600Z","level":"INFO","event_type":"intent_routing_start","input_text":"qual é o estado do sistema","normalized_text":"qual o estado do sistema"}
+{"timestamp":"2026-01-21T19:03:24.601Z","level":"INFO","event_type":"intent_routing_success","intent":"status","confidence":0.95,"processing_time_ms":1}
+{"timestamp":"2026-01-21T19:03:24.602Z","level":"INFO","event_type":"intent_routing_start","input_text":"mostrar métricas","normalized_text":"mostrar mtricas"}
+{"timestamp":"2026-01-21T19:03:24.603Z","level":"INFO","event_type":"intent_routing_unrecognized","normalized_text":"mostrar mtricas","processing_time_ms":1}
+{"timestamp":"2026-01-21T19:03:24.607Z","level":"INFO","event_type":"intent_routing_start","input_text":"ultron execute limpeza agora","normalized_text":"ultron execute limpeza agora"}
+{"timestamp":"2026-01-21T19:03:24.607Z","level":"INFO","event_type":"intent_routing_blocked","reason":"blacklist_match","matched_word":"execute","processing_time_ms":0}
+{"timestamp":"2026-01-21T19:03:24.609Z","level":"INFO","event_type":"intent_routing_start","input_text":"status do sistema","normalized_text":"status do sistema"}
+{"timestamp":"2026-01-21T19:03:24.610Z","level":"INFO","event_type":"intent_routing_success","intent":"status","confidence":0.95,"processing_time_ms":0}
+{"timestamp":"2026-01-21T19:03:24.610Z","level":"INFO","event_type":"intent_routing_start","input_text":"status do sistema","normalized_text":"status do sistema"}
+{"timestamp":"2026-01-21T19:03:24.610Z","level":"INFO","event_type":"intent_routing_success","intent":"status","confidence":0.95,"processing_time_ms":0}
+{"timestamp":"2026-01-21T19:03:24.617Z","level":"INFO","event_type":"responder_init","status":"checking","offline_engine":"windows-tts"}
+{"timestamp":"2026-01-21T19:03:24.618Z","level":"INFO","event_type":"responder_init","status":"ready","offline_available":true,"fallback_available":true}
+{"timestamp":"2026-01-21T19:03:24.621Z","level":"INFO","event_type":"synthesis_attempt","method":"offline","engine":"windows-tts","text_length":16}
+{"timestamp":"2026-01-21T19:03:24.622Z","level":"INFO","event_type":"synthesis_success","method":"offline","text_length":16,"audio_duration_ms":509,"processing_time_ms":2}
+{"timestamp":"2026-01-21T19:03:24.625Z","level":"INFO","event_type":"synthesis_failed","reason":"empty_text","processing_time_ms":0}
+{"timestamp":"2026-01-21T19:03:24.629Z","level":"INFO","event_type":"voice_adapter_init","status":"starting"}
+{"timestamp":"2026-01-21T19:03:24.630Z","level":"INFO","event_type":"voice_listener_init","status":"initializing","hotkey":"CTRL+SHIFT+V"}
+{"timestamp":"2026-01-21T19:03:24.631Z","level":"INFO","event_type":"voice_listener_init","status":"ready","message":"Listening for hotkey: CTRL+SHIFT+V"}
+{"timestamp":"2026-01-21T19:03:24.631Z","level":"INFO","event_type":"transcriber_init","status":"checking","offline_engine":"whisper-local"}
+{"timestamp":"2026-01-21T19:03:24.632Z","level":"INFO","event_type":"transcriber_init","status":"ready","offline_available":true,"fallback_available":false}
+{"timestamp":"2026-01-21T19:03:24.632Z","level":"INFO","event_type":"responder_init","status":"checking","offline_engine":"windows-tts"}
+{"timestamp":"2026-01-21T19:03:24.633Z","level":"INFO","event_type":"responder_init","status":"ready","offline_available":true,"fallback_available":true}
+{"timestamp":"2026-01-21T19:03:24.633Z","level":"INFO","event_type":"voice_adapter_init","status":"ready","listener_ok":true,"transcriber_ok":true,"responder_ok":true}
+{"timestamp":"2026-01-21T19:03:24.636Z","level":"INFO","event_type":"voice_session_start","session_id":"session_1769022204635"}
+{"timestamp":"2026-01-21T19:03:24.636Z","level":"INFO","event_type":"voice_session_step","session_id":"session_1769022204635","step":"waiting_for_input"}
+{"timestamp":"2026-01-21T19:03:24.637Z","level":"INFO","event_type":"voice_recording_start"}
+{"timestamp":"2026-01-21T19:03:24.745Z","level":"INFO","event_type":"voice_recording_stop","status":"failed","reason":"audio_too_short","duration_ms":108}
+{"timestamp":"2026-01-21T19:03:24.746Z","level":"INFO","event_type":"voice_session_error","session_id":"session_1769022204635","error":"Failed to stop recording","total_time_ms":111}
+{"timestamp":"2026-01-21T19:03:24.753Z","level":"INFO","event_type":"voice_listener_shutdown","status":"complete"}
+{"timestamp":"2026-01-21T19:03:24.754Z","level":"INFO","event_type":"voice_adapter_shutdown","status":"complete"}
+{"timestamp":"2026-01-21T19:03:37.111Z","level":"INFO","event_type":"voice_listener_init","status":"initializing","hotkey":"CTRL+SHIFT+V"}
+{"timestamp":"2026-01-21T19:03:37.113Z","level":"INFO","event_type":"voice_listener_init","status":"ready","message":"Listening for hotkey: CTRL+SHIFT+V"}
+{"timestamp":"2026-01-21T19:03:37.115Z","level":"INFO","event_type":"voice_recording_start"}
+{"timestamp":"2026-01-21T19:03:37.229Z","level":"INFO","event_type":"voice_recording_stop","status":"failed","reason":"audio_too_short","duration_ms":114}
+{"timestamp":"2026-01-21T19:03:37.231Z","level":"INFO","event_type":"voice_listener_shutdown","status":"complete"}
+{"timestamp":"2026-01-21T19:03:37.232Z","level":"INFO","event_type":"transcriber_init","status":"checking","offline_engine":"whisper-local"}
+{"timestamp":"2026-01-21T19:03:37.233Z","level":"INFO","event_type":"transcriber_init","status":"ready","offline_available":true,"fallback_available":false}
+{"timestamp":"2026-01-21T19:03:37.235Z","level":"INFO","event_type":"transcription_attempt","method":"offline","engine":"whisper-local"}
+{"timestamp":"2026-01-21T19:03:37.236Z","level":"INFO","event_type":"transcription_success","method":"offline","text":"qual é o estado do sistema","confidence":0.95,"processing_time_ms":1}
+{"timestamp":"2026-01-21T19:03:37.240Z","level":"INFO","event_type":"intent_routing_start","input_text":"qual é o estado do sistema","normalized_text":"qual o estado do sistema"}
+{"timestamp":"2026-01-21T19:03:37.241Z","level":"INFO","event_type":"intent_routing_success","intent":"status","confidence":0.95,"processing_time_ms":1}
+{"timestamp":"2026-01-21T19:03:37.242Z","level":"INFO","event_type":"intent_routing_start","input_text":"mostrar métricas","normalized_text":"mostrar mtricas"}
+{"timestamp":"2026-01-21T19:03:37.243Z","level":"INFO","event_type":"intent_routing_success","intent":"metrics","confidence":0.95,"processing_time_ms":1}
+{"timestamp":"2026-01-21T19:03:37.244Z","level":"INFO","event_type":"intent_routing_start","input_text":"ultron execute limpeza agora","normalized_text":"ultron execute limpeza agora"}
+{"timestamp":"2026-01-21T19:03:37.245Z","level":"INFO","event_type":"intent_routing_blocked","reason":"blacklist_match","matched_word":"execute","processing_time_ms":1}
+{"timestamp":"2026-01-21T19:03:37.246Z","level":"INFO","event_type":"intent_routing_start","input_text":"status do sistema","normalized_text":"status do sistema"}
+{"timestamp":"2026-01-21T19:03:37.247Z","level":"INFO","event_type":"intent_routing_success","intent":"status","confidence":0.95,"processing_time_ms":1}
+{"timestamp":"2026-01-21T19:03:37.248Z","level":"INFO","event_type":"intent_routing_start","input_text":"status do sistema","normalized_text":"status do sistema"}
+{"timestamp":"2026-01-21T19:03:37.248Z","level":"INFO","event_type":"intent_routing_success","intent":"status","confidence":0.95,"processing_time_ms":1}
+{"timestamp":"2026-01-21T19:03:37.254Z","level":"INFO","event_type":"responder_init","status":"checking","offline_engine":"windows-tts"}
+{"timestamp":"2026-01-21T19:03:37.255Z","level":"INFO","event_type":"responder_init","status":"ready","offline_available":true,"fallback_available":true}
+{"timestamp":"2026-01-21T19:03:37.258Z","level":"INFO","event_type":"synthesis_attempt","method":"offline","engine":"windows-tts","text_length":16}
+{"timestamp":"2026-01-21T19:03:37.260Z","level":"INFO","event_type":"synthesis_success","method":"offline","text_length":16,"audio_duration_ms":509,"processing_time_ms":2}
+{"timestamp":"2026-01-21T19:03:37.261Z","level":"INFO","event_type":"synthesis_failed","reason":"empty_text","processing_time_ms":0}
+{"timestamp":"2026-01-21T19:03:37.268Z","level":"INFO","event_type":"voice_adapter_init","status":"starting"}
+{"timestamp":"2026-01-21T19:03:37.269Z","level":"INFO","event_type":"voice_listener_init","status":"initializing","hotkey":"CTRL+SHIFT+V"}
+{"timestamp":"2026-01-21T19:03:37.269Z","level":"INFO","event_type":"voice_listener_init","status":"ready","message":"Listening for hotkey: CTRL+SHIFT+V"}
+{"timestamp":"2026-01-21T19:03:37.270Z","level":"INFO","event_type":"transcriber_init","status":"checking","offline_engine":"whisper-local"}
+{"timestamp":"2026-01-21T19:03:37.270Z","level":"INFO","event_type":"transcriber_init","status":"ready","offline_available":true,"fallback_available":false}
+{"timestamp":"2026-01-21T19:03:37.271Z","level":"INFO","event_type":"responder_init","status":"checking","offline_engine":"windows-tts"}
+{"timestamp":"2026-01-21T19:03:37.271Z","level":"INFO","event_type":"responder_init","status":"ready","offline_available":true,"fallback_available":true}
+{"timestamp":"2026-01-21T19:03:37.272Z","level":"INFO","event_type":"voice_adapter_init","status":"ready","listener_ok":true,"transcriber_ok":true,"responder_ok":true}
+{"timestamp":"2026-01-21T19:03:37.275Z","level":"INFO","event_type":"voice_session_start","session_id":"session_1769022217275"}
+{"timestamp":"2026-01-21T19:03:37.276Z","level":"INFO","event_type":"voice_session_step","session_id":"session_1769022217275","step":"waiting_for_input"}
+{"timestamp":"2026-01-21T19:03:37.276Z","level":"INFO","event_type":"voice_recording_start"}
+{"timestamp":"2026-01-21T19:03:37.387Z","level":"INFO","event_type":"voice_recording_stop","status":"failed","reason":"audio_too_short","duration_ms":111}
+{"timestamp":"2026-01-21T19:03:37.390Z","level":"INFO","event_type":"voice_session_error","session_id":"session_1769022217275","error":"Failed to stop recording","total_time_ms":114}
+{"timestamp":"2026-01-21T19:03:37.394Z","level":"INFO","event_type":"voice_listener_shutdown","status":"complete"}
+{"timestamp":"2026-01-21T19:03:37.395Z","level":"INFO","event_type":"voice_adapter_shutdown","status":"complete"}
+{"timestamp":"2026-01-21T19:03:51.901Z","level":"INFO","event_type":"voice_listener_init","status":"initializing","hotkey":"CTRL+SHIFT+V"}
+{"timestamp":"2026-01-21T19:03:51.904Z","level":"INFO","event_type":"voice_listener_init","status":"ready","message":"Listening for hotkey: CTRL+SHIFT+V"}
+{"timestamp":"2026-01-21T19:03:51.905Z","level":"INFO","event_type":"voice_recording_start"}
+{"timestamp":"2026-01-21T19:03:52.010Z","level":"INFO","event_type":"voice_recording_stop","status":"failed","reason":"audio_too_short","duration_ms":105}
+{"timestamp":"2026-01-21T19:03:52.012Z","level":"INFO","event_type":"voice_listener_shutdown","status":"complete"}
+{"timestamp":"2026-01-21T19:03:52.014Z","level":"INFO","event_type":"transcriber_init","status":"checking","offline_engine":"whisper-local"}
+{"timestamp":"2026-01-21T19:03:52.014Z","level":"INFO","event_type":"transcriber_init","status":"ready","offline_available":true,"fallback_available":false}
+{"timestamp":"2026-01-21T19:03:52.018Z","level":"INFO","event_type":"transcription_attempt","method":"offline","engine":"whisper-local"}
+{"timestamp":"2026-01-21T19:03:52.021Z","level":"INFO","event_type":"transcription_success","method":"offline","text":"qual é o estado do sistema","confidence":0.95,"processing_time_ms":3}
+{"timestamp":"2026-01-21T19:03:52.023Z","level":"INFO","event_type":"intent_routing_start","input_text":"qual é o estado do sistema","normalized_text":"qual o estado do sistema"}
+{"timestamp":"2026-01-21T19:03:52.024Z","level":"INFO","event_type":"intent_routing_success","intent":"status","confidence":0.95,"processing_time_ms":1}
+{"timestamp":"2026-01-21T19:03:52.025Z","level":"INFO","event_type":"intent_routing_start","input_text":"mostrar métricas","normalized_text":"mostrar mtricas"}
+{"timestamp":"2026-01-21T19:03:52.026Z","level":"INFO","event_type":"intent_routing_success","intent":"metrics","confidence":0.95,"processing_time_ms":1}
+{"timestamp":"2026-01-21T19:03:52.028Z","level":"INFO","event_type":"intent_routing_start","input_text":"ultron execute limpeza agora","normalized_text":"ultron execute limpeza agora"}
+{"timestamp":"2026-01-21T19:03:52.033Z","level":"INFO","event_type":"intent_routing_blocked","reason":"blacklist_match","matched_word":"execute","processing_time_ms":5}
+{"timestamp":"2026-01-21T19:03:52.035Z","level":"INFO","event_type":"intent_routing_start","input_text":"status do sistema","normalized_text":"status do sistema"}
+{"timestamp":"2026-01-21T19:03:52.036Z","level":"INFO","event_type":"intent_routing_success","intent":"status","confidence":0.95,"processing_time_ms":1}
+{"timestamp":"2026-01-21T19:03:52.037Z","level":"INFO","event_type":"intent_routing_start","input_text":"status do sistema","normalized_text":"status do sistema"}
+{"timestamp":"2026-01-21T19:03:52.037Z","level":"INFO","event_type":"intent_routing_success","intent":"status","confidence":0.95,"processing_time_ms":1}
+{"timestamp":"2026-01-21T19:03:52.039Z","level":"INFO","event_type":"responder_init","status":"checking","offline_engine":"windows-tts"}
+{"timestamp":"2026-01-21T19:03:52.040Z","level":"INFO","event_type":"responder_init","status":"ready","offline_available":true,"fallback_available":true}
+{"timestamp":"2026-01-21T19:03:52.042Z","level":"INFO","event_type":"synthesis_attempt","method":"offline","engine":"windows-tts","text_length":16}
+{"timestamp":"2026-01-21T19:03:52.043Z","level":"INFO","event_type":"synthesis_success","method":"offline","text_length":16,"audio_duration_ms":541,"processing_time_ms":1}
+{"timestamp":"2026-01-21T19:03:52.044Z","level":"INFO","event_type":"synthesis_failed","reason":"empty_text","processing_time_ms":0}
+{"timestamp":"2026-01-21T19:03:52.047Z","level":"INFO","event_type":"voice_adapter_init","status":"starting"}
+{"timestamp":"2026-01-21T19:03:52.047Z","level":"INFO","event_type":"voice_listener_init","status":"initializing","hotkey":"CTRL+SHIFT+V"}
+{"timestamp":"2026-01-21T19:03:52.048Z","level":"INFO","event_type":"voice_listener_init","status":"ready","message":"Listening for hotkey: CTRL+SHIFT+V"}
+{"timestamp":"2026-01-21T19:03:52.048Z","level":"INFO","event_type":"transcriber_init","status":"checking","offline_engine":"whisper-local"}
+{"timestamp":"2026-01-21T19:03:52.049Z","level":"INFO","event_type":"transcriber_init","status":"ready","offline_available":true,"fallback_available":false}
+{"timestamp":"2026-01-21T19:03:52.049Z","level":"INFO","event_type":"responder_init","status":"checking","offline_engine":"windows-tts"}
+{"timestamp":"2026-01-21T19:03:52.050Z","level":"INFO","event_type":"responder_init","status":"ready","offline_available":true,"fallback_available":true}
+{"timestamp":"2026-01-21T19:03:52.050Z","level":"INFO","event_type":"voice_adapter_init","status":"ready","listener_ok":true,"transcriber_ok":true,"responder_ok":true}
+{"timestamp":"2026-01-21T19:03:52.053Z","level":"INFO","event_type":"voice_session_start","session_id":"session_1769022232052"}
+{"timestamp":"2026-01-21T19:03:52.053Z","level":"INFO","event_type":"voice_session_step","session_id":"session_1769022232052","step":"waiting_for_input"}
+{"timestamp":"2026-01-21T19:03:52.054Z","level":"INFO","event_type":"voice_recording_start"}
+{"timestamp":"2026-01-21T19:03:52.164Z","level":"INFO","event_type":"voice_recording_stop","status":"failed","reason":"audio_too_short","duration_ms":110}
+{"timestamp":"2026-01-21T19:03:52.165Z","level":"INFO","event_type":"voice_session_error","session_id":"session_1769022232052","error":"Failed to stop recording","total_time_ms":113}
+{"timestamp":"2026-01-21T19:03:52.169Z","level":"INFO","event_type":"voice_listener_shutdown","status":"complete"}
+{"timestamp":"2026-01-21T19:03:52.170Z","level":"INFO","event_type":"voice_adapter_shutdown","status":"complete"}

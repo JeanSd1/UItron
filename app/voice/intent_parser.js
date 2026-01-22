@@ -1,16 +1,61 @@
 /**
- * INTENT PARSER — Camada de Intenção
- * Converte texto em intenção executável
- * Tipos: "app", "url", "system"
+ * INTENT PARSER — Camada de Intenção Profissional
+ * 3 camadas: FILTRO → NORMALIZAÇÃO → INTENÇÃO
+ * Sem ruído, sem spam, sem gambiarra
  */
 
+// =========== CAMADA 1: VALIDAÇÃO DE FRASE ===========
+function fraseValida(text) {
+  if (!text) return false;
+  const trimmed = text.trim();
+  
+  // Mínimo 6 caracteres (evita "nome", "abra", etc)
+  if (trimmed.length < 6) return false;
+  
+  // Precisa ter pelo menos 2 palavras (evita uma palavra aleatória)
+  const palavras = trimmed.split(/\s+/).filter(p => p.length > 0);
+  if (palavras.length < 2) return false;
+  
+  return true;
+}
+
+// =========== CAMADA 2: NORMALIZAÇÃO AGRESSIVA ===========
+function normalizar(text) {
+  let normalized = text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // Remove acentos
+    .trim();
+
+  // Sinônimos de CHROME
+  normalized = normalized.replace(
+    /cr[oô]m(io|o)?|cromo|clube|clone|cr\s*ô?mica|cronica|google\s+cromo|crômica/gi,
+    "chrome"
+  );
+
+  // Sinônimos de ABRA (para evitar "abraão", "abrão")
+  normalized = normalized.replace(/abr[aã]o|abrão|abre\s/gi, "abra ");
+
+  // Normalize espaços múltiplos
+  normalized = normalized.replace(/\s+/g, " ").trim();
+
+  return normalized;
+}
+
+// =========== CAMADA 3: INTENÇÃO COM REGEX ===========
 function interpretarComando(texto) {
-  const t = texto.toLowerCase().trim();
+  // Validação ANTES de tudo
+  if (!fraseValida(texto)) {
+    return null; // Ignora ruído
+  }
+
+  // Normalizar
+  const t = normalizar(texto);
 
   // ============ URLs (Web) ============
   
   // 🎬 YOUTUBE
-  if (t.includes("youtube")) {
+  if (/youtube/.test(t)) {
     return {
       type: "url",
       value: "https://www.youtube.com",
@@ -19,7 +64,7 @@ function interpretarComando(texto) {
   }
 
   // 📘 FACEBOOK
-  if (t.includes("facebook")) {
+  if (/facebook/.test(t)) {
     return {
       type: "url",
       value: "https://www.facebook.com",
@@ -28,7 +73,7 @@ function interpretarComando(texto) {
   }
 
   // 🐦 TWITTER/X
-  if (t.includes("twitter") || t.includes("x.com")) {
+  if (/twitter|x\.com/.test(t)) {
     return {
       type: "url",
       value: "https://www.twitter.com",
@@ -37,7 +82,7 @@ function interpretarComando(texto) {
   }
 
   // 🔴 REDDIT
-  if (t.includes("reddit")) {
+  if (/reddit/.test(t)) {
     return {
       type: "url",
       value: "https://www.reddit.com",
@@ -45,66 +90,50 @@ function interpretarComando(texto) {
     };
   }
 
-  // 🔍 PESQUISA GOOGLE (intenção forte)
-  if (
-    t.includes("pesquise") ||
-    t.includes("pesquisa") ||
-    t.includes("pesquisar") ||
-    t.includes("procure")
-  ) {
+  // 🔍 PESQUISA GOOGLE (REGEX FORTE)
+  if (/pesquise|pesquisa|pesquisar|procure/.test(t)) {
     const query = t
-      .replace(/pesquise|pesquisa|pesquisar|procure/g, "")
-      .replace(/no google|google/g, "")
+      .replace(/pesquise|pesquisa|pesquisar|procure|no google|google/gi, "")
       .trim();
 
-    if (query.length < 2) {
-      return { type: "url", value: "https://www.google.com", descricao: "Google" };
+    if (query.length > 3) {
+      return {
+        type: "url",
+        value: `https://www.google.com/search?q=${encodeURIComponent(query)}`,
+        descricao: `Pesquisar: ${query}`
+      };
     }
-
+    
+    // Se foi só "pesquise" sem query, abre Google
     return {
       type: "url",
-      value: `https://www.google.com/search?q=${encodeURIComponent(query)}`,
-      descricao: `Pesquisar: ${query}`
+      value: "https://www.google.com",
+      descricao: "Google"
     };
   }
 
   // ============ APPS (Executáveis) ============
 
-  // 🌐 NAVEGADOR (Chrome/Edge)
-  if (
-    t.includes("navegador") ||
-    t.includes("chrome") ||
-    t.includes("crômica") ||
-    t.includes("cronica") ||
-    t.includes("clone")
-  ) {
+  // 🌐 NAVEGADOR (Chrome/Edge) — REGEX FORTE
+  if (/abra.*chrome|chrome$|google\s+chrome|navegador|abra.*navegador/.test(t)) {
     return {
       type: "app",
       value: "chrome",
-      descricao: "Abrir navegador (Chrome)"
+      descricao: "Abrir Chrome"
     };
   }
 
   // 🧮 CALCULADORA
-  if (
-    t.includes("calculadora") ||
-    t.includes("calc") ||
-    t.includes("calcular")
-  ) {
+  if (/calculadora|abra.*calc|calc$/.test(t)) {
     return {
       type: "app",
       value: "calc",
-      descricao: "Abrir calculadora"
+      descricao: "Abrir Calculadora"
     };
   }
 
   // 📝 NOTEPAD
-  if (
-    t.includes("notepad") ||
-    t.includes("bloco") ||
-    t.includes("editor") ||
-    t.includes("texto")
-  ) {
+  if (/notepad|bloco|editor|abra.*texto|abra.*bloco/.test(t)) {
     return {
       type: "app",
       value: "notepad",
@@ -113,12 +142,7 @@ function interpretarComando(texto) {
   }
 
   // 📁 EXPLORADOR
-  if (
-    t.includes("explorador") ||
-    t.includes("explorer") ||
-    t.includes("pastas") ||
-    t.includes("arquivos")
-  ) {
+  if (/explorador|explorer|abra.*pastas|abra.*arquivos/.test(t)) {
     return {
       type: "app",
       value: "explorer",
@@ -127,7 +151,7 @@ function interpretarComando(texto) {
   }
 
   // 🎮 DISCORD
-  if (t.includes("discord")) {
+  if (/discord|abra.*discord/.test(t)) {
     return {
       type: "app",
       value: "discord",
@@ -136,7 +160,7 @@ function interpretarComando(texto) {
   }
 
   // 💬 TELEGRAM
-  if (t.includes("telegram")) {
+  if (/telegram|abra.*telegram/.test(t)) {
     return {
       type: "app",
       value: "telegram",
@@ -145,7 +169,7 @@ function interpretarComando(texto) {
   }
 
   // 🎬 OBS (Streaming)
-  if (t.includes("obs")) {
+  if (/obs|abra.*obs/.test(t)) {
     return {
       type: "app",
       value: "obs",
@@ -154,43 +178,20 @@ function interpretarComando(texto) {
   }
 
   // 💻 VSCODE
-  if (
-    t.includes("vscode") ||
-    t.includes("visual studio") ||
-    t.includes("code")
-  ) {
+  if (/vscode|visual\s+studio|abra.*code/.test(t)) {
     return {
       type: "app",
       value: "code",
-      descricao: "Abrir Visual Studio Code"
+      descricao: "Abrir VS Code"
     };
   }
 
   // 🎵 SPOTIFY
-  if (t.includes("spotify")) {
+  if (/spotify|abra.*spotify/.test(t)) {
     return {
       type: "app",
       value: "spotify",
       descricao: "Abrir Spotify"
-    };
-  }
-
-  // ============ SYSTEM (Comandos do sistema) ============
-
-  // 🔊 VOLUME
-  if (t.includes("aumentar volume") || t.includes("mais volume")) {
-    return {
-      type: "system",
-      value: "volume-up",
-      descricao: "Aumentar volume"
-    };
-  }
-
-  if (t.includes("diminuir volume") || t.includes("menos volume")) {
-    return {
-      type: "system",
-      value: "volume-down",
-      descricao: "Diminuir volume"
     };
   }
 
@@ -199,5 +200,7 @@ function interpretarComando(texto) {
 }
 
 module.exports = {
-  interpretarComando
+  interpretarComando,
+  fraseValida,
+  normalizar
 };

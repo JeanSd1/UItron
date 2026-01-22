@@ -1,0 +1,41 @@
+{
+  "name": "ultron-voice-assistant",
+  "version": "1.0.0",
+  "description": "Ultron - Assistente de voz por FFmpeg + Vosk. Escuta comandos em Português e executa ações no Windows.",
+  "main": "ultron-ffmpeg-vosk.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node ultron-ffmpeg-vosk.js",
+    "test:vosk": "node test-vosk.js",
+    "test:ffmpeg": "ffmpeg -list_devices true -f dshow -i dummy",
+    "install:vosk": "npm install vosk --legacy-peer-deps"
+  },
+  "keywords": [
+    "voice",
+    "assistant",
+    "ultron",
+    "ffmpeg",
+    "vosk",
+    "speech-recognition",
+    "portuguese",
+    "windows"
+  ],
+  "author": "Projeto Ultron",
+  "license": "MIT",
+  "dependencies": {
+    "vosk": "^0.3.21"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "systemDependencies": {
+    "ffmpeg": ">=4.0",
+    "vosk": ">=0.3"
+  },
+  "windowsRequirements": [
+    "Node.js v16+",
+    "FFmpeg (instalado via Chocolatey)",
+    "Vosk modelo PT-BR (baixado automaticamente)"
+  ]
+}

@@ -1,97 +1,141 @@
 # 🎤 ULTRON - Voice Assistant & Command Executor
 
-Sistema inteligente que executa comandos no seu PC por **voz** ou **texto**.
+Sistema inteligente que executa comandos no seu PC por **voz** ou **texto** em Português.
+
+**Versão:** 2.0 | **Status:** ✅ Pronto para Usar | **Tipo:** Voice + Text Commands
 
 ---
 
-## 🚀 Início Rápido
+## 🚀 Início Rápido (30 segundos)
 
-### Opção 1: Iniciar Ultron (RECOMENDADO!)
+### ⚡ Executar Ultron Agora
 
-```bash
-cd "c:\Users\Lugan\OneDrive\Área de Trabalho\Projeto Ultron\Ultron" ; node ultron-continuo.js
+Abra o PowerShell ou CMD e execute:
+
+```powershell
+cd "c:\Users\Lugan\OneDrive\Área de Trabalho\Projeto Ultron\Ultron"
+node ultron-continuo.js
 ```
 
-### Opção 2: Menu Interativo
-
-```bash
-node rodar-teste.js
-```
-
-Escolha uma opção no menu:
-1. Rodar Ultron (Voice + Text)
-2. Teste rápido do seu comando
-3. Demonstração de comandos
-4. Sair
+**Pronto!** Ultron está escutando. Diga seus comandos em Português.
 
 ---
 
 ## 💬 Como Usar
 
-### Por VOZ (Microfone)
-1. **FALE** seu comando (ex: "abra novo documento de texto e escreva olá mundo")
-2. Digite **sim** quando pedir autorização
-3. Pronto! ✨
+### 🎙️ Por VOZ (Recomendado)
 
-### Por TEXTO (Se microfone não funcionar)
-1. Digite o comando direto no terminal
-2. O resto funciona igual!
+1. Fale seu comando naturalmente em Português
+2. Ultron reconhece automaticamente
+3. Executa com autorização
+4. Responde por voz
+
+**Exemplos:**
+```
+"Ultron qual é a hora"
+"Ultron abra o notepad"
+"Ultron listar arquivos"
+"Ultron como está o sistema"
+"Ultron abra o explorador"
+```
+
+### ⌨️ Por TEXTO (Alternativa)
+
+Se o microfone não funcionar, use a alternativa com texto:
+
+```powershell
+cd "c:\Users\Lugan\OneDrive\Área de Trabalho\Projeto Ultron"
+node rodar-teste.js
+# Selecione opção 2: "Teste rápido do seu comando"
+```
 
 ---
 
-## 📋 Exemplos de Comandos
+## 📋 Comandos Disponíveis
 
-```
-"abra novo documento de texto e escreva olá mundo"
-"qual é a hora"
-"como está o sistema"
-"abrir calculadora"
-"listar arquivos"
-```
+| Categoria | Comando | Exemplo |
+|-----------|---------|---------|
+| **Aplicações** | Abrir apps | "abra o notepad", "abra o excel" |
+| **Sistema** | Status | "qual é a hora", "qual é a data" |
+| **Arquivos** | Listar | "listar arquivos", "abra o explorador" |
+| **Genérico** | Executar | "abra calculadora", "status do sistema" |
 
 ---
 
 ## 📚 Documentação
 
-- **[MANUAL_USUARIO.md](MANUAL_USUARIO.md)** - Guia completo de uso
-- **[STATUS_FINAL.txt](STATUS_FINAL.txt)** - Status final do projeto
-- **[Ultron/GUIA_COMANDOS_AVANCADOS.md](Ultron/GUIA_COMANDOS_AVANCADOS.md)** - Todos os comandos
+- [MANUAL_USUARIO.md](MANUAL_USUARIO.md) - Guia completo
+- [STATUS_FINAL.txt](STATUS_FINAL.txt) - Versão final
+- [Ultron/GUIA_COMANDOS_AVANCADOS.md](Ultron/GUIA_COMANDOS_AVANCADOS.md) - Todos os comandos
 
 ---
 
-## 🔐 Segurança
+## 🔒 Segurança
 
-✅ Cada comando requer autorização (você digita "sim")  
+✅ Cada comando requer aprovação  
 ✅ Bloqueio automático de comandos perigosos  
 ✅ Auditoria de todas as ações  
+✅ Funciona 100% offline (sem dados na nuvem)
 
 ---
 
-## 📁 Estrutura
+## 📁 Estrutura do Projeto
 
 ```
 Projeto Ultron/
-├── rodar-teste.js              ← Menu interativo 🎯
-├── MANUAL_USUARIO.md           ← Guia de uso
+├── README.md                   ← Você está aqui 👈
+├── rodar-teste.js              ← Menu interativo
+├── MANUAL_USUARIO.md           ← Guia completo
 ├── STATUS_FINAL.txt            ← Status do projeto
 └── Ultron/
-    ├── ultron-voice-full.js    ← Sistema principal
-    ├── app/voice/              ← Módulos do Ultron
-    └── ...
+    ├── ultron-continuo.js      ← PRINCIPAL (execute isto)
+    ├── package.json            ← Dependências
+    ├── app/
+    │   └── voice/              ← Módulos de voz
+    │       ├── executor_robusto.js
+    │       ├── hotword_listener.js
+    │       └── ...
+    └── vosk-model/             ← Modelo de voz PT-BR
 ```
 
 ---
 
-## 🎯 Teste Rápido
+## ⚙️ Pré-requisitos
 
-Para testar sem falar:
+- **Node.js** 16+ ([baixar](https://nodejs.org/))
+- **FFmpeg** 4.0+ ([baixar](https://ffmpeg.org/))
+- **Modelo Vosk PT-BR** (baixado automaticamente)
+- **Microfone** (para modo voz)
 
-```bash
-node rodar-teste.js
-# Selecione opção 2
+---
+
+## 🎯 Troubleshooting
+
+### Erro: "vosk-model não encontrado"
+```powershell
+cd Ultron
+npm install
+# Modelo será baixado automaticamente
+```
+
+### Erro: "Microfone não detectado"
+Verifique o nome do microfone em `ultron-continuo.js` linha 21.
+Ou use modo texto: `node rodar-teste.js`
+
+### Erro: "FFmpeg não encontrado"
+```powershell
+choco install ffmpeg
+# ou baixe em: https://ffmpeg.org/
 ```
 
 ---
 
-**Versão:** 2.0  
-**Status:** ✅ Pronto para Uso
+## 🚀 Próximas Etapas
+
+1. ✅ Execute: `node ultron-continuo.js`
+2. ✅ Fale um comando
+3. ✅ Veja a mágica acontecer!
+
+---
+
+**Desenvolvido com ❤️ em Português**

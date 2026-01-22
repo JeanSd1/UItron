@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /**
  * ULTRON — MODO CONTÍNUO (5.1.4)
  * ✅ FFmpeg stream contínuo
@@ -15,8 +16,8 @@ const { containsHotword, stripHotword } = require("./app/voice/hotword_listener"
 const executor = require("./app/voice/executor_robusto");
 
 // ================= CONFIG =================
-const MICROFONE = "Headset (E6S Hands-Free AG Audio)";
-const MODEL_PATH = "./vosk-model";
+const MICROFONE = "Microfone (2- High Definition Audio Device)";
+const MODEL_PATH = path.join(__dirname, "vosk-model");
 
 // ================= STATE MACHINE =================
 let STATE = "IDLE"; // IDLE | AWAKE | PROCESSING

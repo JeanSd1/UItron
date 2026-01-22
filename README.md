@@ -140,7 +140,7 @@ choco install ffmpeg
 
 ## 👨‍💻 Desenvolvedor
 
-**Desenvolvido por:** [Jean Souza (@JeanSd1)](https://github.com/JeanSd1)
+**Desenvolvido por:** [Jean Durgante (@JeanSd1)](https://github.com/JeanSd1)
 
 - 🔗 GitHub: https://github.com/JeanSd1
 - 🎯 Projeto: [UItron - Voice Assistant for Windows](https://github.com/JeanSd1/UItron)

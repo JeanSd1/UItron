@@ -30,6 +30,112 @@ class ExecutorRobusto {
   }
 
   /**
+   * REGRA 2: Abrir URL no navegador
+   * Chrome, Edge, Firefox, IE
+   */
+  abrirUrl(url) {
+    return new Promise((resolve) => {
+      try {
+        // Windows: start "" url
+        const child = spawn("cmd", ["/c", `start ${url}`], {
+          detached: true,
+          stdio: "ignore",
+          windowsHide: true
+        });
+
+        child.on("error", () => resolve(false));
+        child.unref();
+        setTimeout(() => resolve(true), 500);
+
+      } catch (err) {
+        console.error(`[URL ERROR] ${err.message}`);
+        resolve(false);
+      }
+    });
+  }
+
+  /**
+   * Mapa de websites conhecidos
+   */
+  obterUrlWebsite(nome) {
+    const websites = {
+      // Social Media
+      "youtube": "https://youtube.com",
+      "google": "https://google.com",
+      "facebook": "https://facebook.com",
+      "instagram": "https://instagram.com",
+      "twitter": "https://twitter.com",
+      "tiktok": "https://tiktok.com",
+      "whatsapp": "https://web.whatsapp.com",
+      "telegram": "https://web.telegram.org",
+      "discord": "https://discord.com",
+      "linkedin": "https://linkedin.com",
+      "reddit": "https://reddit.com",
+      
+      // Produtividade
+      "gmail": "https://mail.google.com",
+      "outlook": "https://outlook.com",
+      "github": "https://github.com",
+      "gitlab": "https://gitlab.com",
+      "stackoverflow": "https://stackoverflow.com",
+      
+      // Streaming
+      "netflix": "https://netflix.com",
+      "amazon prime": "https://primevideo.com",
+      "twitch": "https://twitch.tv",
+      "spotify": "https://spotify.com",
+      
+      // Outros
+      "wikipedia": "https://wikipedia.org",
+      "chatgpt": "https://chat.openai.com",
+      "claude": "https://claude.ai",
+      "perplexity": "https://perplexity.ai",
+    };
+
+    // Procura por website
+    for (const [site, url] of Object.entries(websites)) {
+      if (nome.includes(site)) {
+        return url;
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Extrair query de busca
+   * "procure por python" → "python"
+   * "busque machine learning" → "machine learning"
+   */
+  extrairQuery(texto) {
+    const patterns = [
+      /procure por (.+)/,
+      /busque (.+)/,
+      /procura (.+)/,
+      /busca (.+)/,
+      /pesquise (.+)/,
+    ];
+
+    for (const pattern of patterns) {
+      const match = texto.match(pattern);
+      if (match && match[1]) {
+        return match[1].trim();
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Executar busca no Google
+   */
+  async buscaGoogle(query) {
+    const urlQuery = encodeURIComponent(query);
+    const url = `https://google.com/search?q=${urlQuery}`;
+    return await this.abrirUrl(url);
+  }
+
+  /**
    * REGRA 3: Spawn isolado com handlers
    * NO WINDOWS: sempre use cmd /c start
    */
@@ -243,8 +349,48 @@ class ExecutorRobusto {
       }
     }
 
+    // ========== MODO 4: EXECUTOR GENÉRICO (SUPER FLEXÍVEL) ==========
+    
+    // Se contém "procure", "busque", "pesquise" → BUSCA NO GOOGLE
+    const query = this.extrairQuery(text);
+    if (query) {
+      console.log(`🔍 Buscando: "${query}"`);
+      const resultado = await this.buscaGoogle(query);
+      return { 
+        sucesso: resultado, 
+        msg: resultado ? `✅ Buscando "${query}" no Google` : "❌ Erro ao abrir navegador" 
+      };
+    }
+
+    // Detecta intenção de ABRIR + WEBSITE
+    if (text.includes("abra") || text.includes("abre") || text.includes("abrir")) {
+      // Procura por website conhecido
+      const urlWebsite = this.obterUrlWebsite(text);
+      if (urlWebsite) {
+        console.log(`🌐 Abrindo website: ${urlWebsite}`);
+        const resultado = await this.abrirUrl(urlWebsite);
+        return { 
+          sucesso: resultado, 
+          msg: resultado ? `✅ Abrindo ${urlWebsite}` : "❌ Erro ao abrir" 
+        };
+      }
+
+      // Tentar executar como aplicação desconhecida
+      // "abra xyz" → tenta executar "xyz.exe"
+      const appMatch = text.match(/abra(?: o| a| os| as)?\s+(.+)/);
+      if (appMatch) {
+        const appName = appMatch[1].trim();
+        console.log(`📦 Tentando abrir aplicação: "${appName}"`);
+        const resultado = await this.safeSpawn(appName, [], appName);
+        return { 
+          sucesso: resultado, 
+          msg: resultado ? `✅ Abrindo ${appName}` : `❌ Aplicação "${appName}" não encontrada` 
+        };
+      }
+    }
+
     // Se não encontrou padrão
-    return { sucesso: false, msg: `Comando não reconhecido: ${text}` };
+    return { sucesso: false, msg: `❌ Comando não reconhecido: ${text}` };
   }
 
   /**

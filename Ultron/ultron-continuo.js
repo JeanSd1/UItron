@@ -1,181 +1,152 @@
-const readline = require("readline");
+#!/usr/bin/env node
+/**
+ * ULTRON — MODO CONTÍNUO (ESCUTA 24/7)
+ * ✅ FFmpeg stream contínuo
+ * ✅ Vosk processando real-time
+ * ✅ Sempre ativo - sem ENTER
+ * ✅ Reconhece comandos automaticamente
+ * ✅ Executa sem delay
+ */
+
 const { spawn } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 const vosk = require("vosk");
 const { containsHotword, stripHotword } = require("./app/voice/hotword_listener");
-const { matchIntent } = require("./app/voice/intent_router");
 const executor = require("./app/voice/executor_robusto");
 
 // ================= CONFIG =================
 const MICROFONE = "Microfone (2- High Definition Audio Device)";
-const MODEL_PATH = "./vosk-model";
-const WAV_PATH = path.join(__dirname, "input.wav");
-const RECORD_SECONDS = 8;
+const MODEL_PATH = path.join(__dirname, "vosk-model");
+
+// ================= NORMALIZAR COMANDO =================
+function normalizeCommand(text) {
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/^outro\s+/g, "")      // "outro" = reconhecimento errado de "ultron"
+    .replace(/^ultron\s+/g, "")     // remove "ultron" se vir correto
+    .replace(/^oi\s+/g, "")         // remove "oi"
+    .replace(/^ultra\s+/g, "")      // variações
+    .trim();
+}
 
 // ================= VOSK SETUP =================
 if (!fs.existsSync(MODEL_PATH)) {
   console.error("❌ Modelo Vosk não encontrado em:", MODEL_PATH);
-  console.error("Baixe com: curl -L -o vosk-model-pt-br.zip https://alphacephei.com/vosk/models/vosk-model-small-pt-0.3.zip");
   process.exit(1);
 }
 
 vosk.setLogLevel(0);
 const model = new vosk.Model(MODEL_PATH);
-console.log("✅ Modelo Vosk carregado: vosk-model\n");
+let recognizer = null;
 
-// ================= READLINE =================
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
-
-// ================= BANNER =================
 console.clear();
 console.log(`
 ╔════════════════════════════════════════════════════════╗
-║ 🎤 ULTRON - VOZ COM FFMPEG + VOSK                     ║
+║ 🎤 ULTRON — MODO CONTÍNUO (ESCUTA 24/7)              ║
+║ Diga seus comandos em Português                       ║
 ║ Modelo PT-BR carregado ✅                             ║
+║ Sem apertar ENTER - sempre ativo                      ║
 ╚════════════════════════════════════════════════════════╝
 `);
+console.log("🎧 Escutando... (Ctrl+C para sair)\n");
 
-// ================= FUNÇÕES =================
-function gravarAudio() {
-  return new Promise((resolve, reject) => {
-    if (fs.existsSync(WAV_PATH)) fs.unlinkSync(WAV_PATH);
-
-    console.log(`🎤 Gravando por ${RECORD_SECONDS} segundos...`);
-
-    const ffmpeg = spawn("ffmpeg", [
-      "-y", "-f", "dshow",
-      "-i", `audio=${MICROFONE}`,
-      "-t", String(RECORD_SECONDS),
-      "-ac", "1",
-      "-ar", "16000",
-      WAV_PATH
-    ], { stdio: ["pipe", "pipe", "pipe"] });
-
-    const timeout = setTimeout(() => ffmpeg.kill(), (RECORD_SECONDS + 2) * 1000);
-
-    ffmpeg.on("close", () => {
-      clearTimeout(timeout);
-      if (fs.existsSync(WAV_PATH) && fs.statSync(WAV_PATH).size > 1000) {
-        resolve();
-      } else {
-        reject(new Error("Falha na gravação"));
-      }
-    });
-  });
-}
-
-function transcrever() {
+// ================= RESPOSTA POR VOZ =================
+function speak(texto) {
   try {
-    if (!fs.existsSync(WAV_PATH)) {
-      throw new Error("Arquivo WAV não encontrado");
-    }
-
-    const stats = fs.statSync(WAV_PATH);
-    if (stats.size < 2000) {
-      console.log("⚠️  Arquivo muito pequeno — microfone silencioso?");
-      return "";
-    }
-
-    const buffer = fs.readFileSync(WAV_PATH);
-    const rec = new vosk.Recognizer({ model, sampleRate: 16000 });
+    const cmd = `Add-Type -AssemblyName System.Speech; $speak = New-Object System.Speech.Synthesis.SpeechSynthesizer; $speak.Rate = 0; $speak.Volume = 100; $speak.Speak('${texto.replace(/'/g, "''")}')`;
     
-    rec.acceptWaveform(buffer);
-    const result = rec.finalResult();
-    rec.free();
-
-    const text = result.text || result.result?.join("") || "";
-    
-    if (text && text.trim().length > 0) {
-      return text.trim();
-    }
-    
-    return "";
+    spawn("powershell", ["-NoProfile", "-Command", cmd], {
+      stdio: "ignore",
+      detached: true,
+      windowsHide: true
+    }).unref();
   } catch (e) {
-    console.log("⚠️  Erro na transcrição:", e.message);
-    return "";
+    // Silenciar erros de fala
   }
 }
 
-// ================= LOOP =================
-function prompt() {
-  rl.question("\n[ENTER=GRAVAR | Digite | 'sair'] => ", async (input) => {
+// ================= HANDLER DE VOZ =================
+async function handleSpeech(texto) {
+  if (!texto || texto.trim().length === 0) return;
 
-    // SAIR
-    if (input.trim().toLowerCase() === "sair") {
-      console.log("✅ Até logo!");
-      rl.close();
-      process.exit(0);
-    }
+  const clean = normalizeCommand(texto);
+  
+  if (clean.length === 0) return;
 
-    // ENTER → VOZ
-    if (input.trim() === "") {
-      try {
-        await gravarAudio();
-        console.log("🧠 Transcrevendo...");
-        const texto = transcrever();
-
-        if (!texto || texto.trim() === "") {
-          console.log("⚠️  Sem transcrição detectada");
-          console.log("💡 Dica: Fale mais alto ou mais perto do microfone\n");
-          return prompt();
-        }
-
-        console.log(`📝 Transcrição: "${texto}"`);
-
-        if (!containsHotword(texto)) {
-          console.log("🔇 Hotword não detectada. Diga 'Ultron' para ativar.");
-          return prompt();
-        }
-
-        const command = stripHotword(texto);
-
-        if (!command) {
-          console.log("⚠️  Nenhum comando após hotword.");
-          return prompt();
-        }
-
-        console.log(`🎯 COMANDO ATIVADO: "${command}"`);
-        
-        // REGRA 2: Resposta ANTES da execução
-        console.log(`\n✅ Executando: "${command}"\n`);
-        
-        // REGRA 3: Execução isolada com espera
-        try {
-          const resultado = await executor.executar(command);
-          console.log(`${resultado.sucesso ? "✅" : "❌"} ${resultado.msg}\n`);
-        } catch (e) {
-          console.log(`⚠️  Erro: ${e.message}\n`);
-        }
-        
-      } catch (e) {
-        console.log("❌ Erro:", e.message);
-      }
-
-      return prompt();
-    }
-
-    // TEXTO DIGITADO
-    console.log(`✅ Comando digitado: "${input}"`);
+  console.log(`\n📝 Você disse: "${texto}"`);
+  console.log(`🔧 Comando: "${clean}"`);
+  
+  try {
+    const resultado = await executor.executar(clean);
+    console.log(`${resultado.sucesso ? "✅" : "❌"} ${resultado.msg}\n`);
     
-    // REGRA 2: Resposta ANTES da execução
-    console.log(`⚙️  Processando...\n`);
+    if (resultado.sucesso) {
+      speak("Executado com sucesso");
+    }
+  } catch (e) {
+    console.error("[ERRO]", e.message);
+    speak("Erro ao executar");
+  }
+}
+
+// ================= STREAM CONTÍNUO =================
+function iniciarStreamContinuo() {
+  const ffmpeg = spawn("ffmpeg", [
+    "-f", "dshow",
+    "-i", `audio=${MICROFONE}`,
+    "-ar", "16000",
+    "-ac", "1",
+    "-f", "s16le",
+    "-"
+  ], {
+    stdio: ["ignore", "pipe", "pipe"],
+    windowsHide: true
+  });
+
+  ffmpeg.on("error", (err) => {
+    console.error("❌ Erro FFmpeg:", err.message);
+    process.exit(1);
+  });
+
+  ffmpeg.stderr.on("data", (data) => {
+    // Ignorar logs do FFmpeg
+  });
+
+  // Inicializar Vosk recognizer
+  recognizer = new vosk.Recognizer({ model, sampleRate: 16000 });
+
+  let chunks = 0;
+  
+  // Stream: FFmpeg → Vosk
+  ffmpeg.stdout.on("data", (chunk) => {
+    chunks++;
+    // Mostrar indicador a cada 10 chunks
+    if (chunks % 10 === 0) {
+      process.stdout.write(".");
+    }
     
-    // REGRA 3: Execução isolada
-    (async () => {
-      try {
-        const resultado = await executor.executar(input);
-        console.log(`${resultado.sucesso ? "✅" : "❌"} ${resultado.msg}\n`);
-      } catch (e) {
-        console.log(`⚠️  Erro: ${e.message}\n`);
+    if (recognizer.acceptWaveform(chunk)) {
+      // Resultado final
+      const result = recognizer.result();
+      if (result && result.text && result.text.trim()) {
+        process.stdout.write("\n");
+        handleSpeech(result.text);
+        chunks = 0;
       }
-      prompt();
-    })();
+    }
+  });
+
+  // Graceful shutdown
+  process.on("SIGINT", () => {
+    console.log("\n\n✅ Ultron desligado.");
+    recognizer.free();
+    ffmpeg.kill();
+    process.exit(0);
   });
 }
 
 // ================= START =================
-prompt();
+iniciarStreamContinuo();

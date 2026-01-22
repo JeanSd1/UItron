@@ -68,15 +68,15 @@ async function handleSpeech(texto) {
 function iniciarStreamContinuo() {
   console.log("🎤 Iniciando escuta contínua...\n");
 
-  // FFmpeg: usar microfone PADRÃO (sem fixar device)
-  // Windows usa automaticamente o input padrão
+  // FFmpeg: usar microfone EXATO listado por dshow
+  // Nome obtido via: ffmpeg -list_devices true -f dshow -i dummy
   const ffmpeg = spawn("ffmpeg", [
     "-f", "dshow",
-    "-i", "audio=default",  // ← PADRÃO (funciona em qualquer Windows)
+    "-i", "audio=Headset (E6S Hands-Free AG Audio)",
     "-ar", "16000",
     "-ac", "1",
     "-f", "s16le",
-    "-"
+    "pipe:1"
   ], {
     stdio: ["ignore", "pipe", "pipe"],
     windowsHide: true

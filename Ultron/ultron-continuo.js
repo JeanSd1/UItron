@@ -1,21 +1,20 @@
 #!/usr/bin/env node
 /**
- * ULTRON — MODO CONTÍNUO (HOTWORD)
- * ✅ FFmpeg stream contínuo
+ * ULTRON — MODO CONTÍNUO (HOTWORD) - VERSÃO ROBUSTA
+ * ✅ FFmpeg stream contínuo (dispositivo padrão)
  * ✅ Vosk processando real-time
  * ✅ Reconhece "Oi Ultron" automaticamente
  * ✅ Sem ENTER, sem terminal interativo
+ * ✅ Sem hardcode de device (funciona em qualquer Windows)
  */
 
 const { spawn } = require("child_process");
 const fs = require("fs");
-const path = require("path");
 const vosk = require("vosk");
 const { containsHotword, stripHotword } = require("./app/voice/hotword_listener");
 const executor = require("./app/voice/executor_robusto");
 
 // ================= CONFIG =================
-const MICROFONE = "Microfone (2- High Definition Audio Device)";
 const MODEL_PATH = "./vosk-model";
 
 // ================= VOSK SETUP =================
@@ -69,9 +68,11 @@ async function handleSpeech(texto) {
 function iniciarStreamContinuo() {
   console.log("🎤 Iniciando escuta contínua...\n");
 
+  // FFmpeg: usar microfone PADRÃO (sem fixar device)
+  // Windows usa automaticamente o input padrão
   const ffmpeg = spawn("ffmpeg", [
     "-f", "dshow",
-    "-i", `audio=${MICROFONE}`,
+    "-i", "audio=default",  // ← PADRÃO (funciona em qualquer Windows)
     "-ar", "16000",
     "-ac", "1",
     "-f", "s16le",
@@ -83,6 +84,7 @@ function iniciarStreamContinuo() {
 
   ffmpeg.on("error", (err) => {
     console.error("❌ FFmpeg erro:", err.message);
+    console.error("💡 Dica: Verifique se FFmpeg está instalado");
     process.exit(1);
   });
 

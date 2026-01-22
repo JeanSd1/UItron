@@ -138,4 +138,14 @@ choco install ffmpeg
 
 ---
 
+## 👨‍💻 Desenvolvedor
+
+**Desenvolvido por:** [Jean Souza (@JeanSd1)](https://github.com/JeanSd1)
+
+- 🔗 GitHub: https://github.com/JeanSd1
+- 🎯 Projeto: [UItron - Voice Assistant for Windows](https://github.com/JeanSd1/UItron)
+- 📅 Versão: 2.0 | 2026
+
+---
+
 **Desenvolvido com ❤️ em Português**

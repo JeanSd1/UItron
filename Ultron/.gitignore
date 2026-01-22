@@ -32,6 +32,36 @@ local.properties
 *.hprof
 .cxx/
 
+# Vosk model (grande demais para GitHub)
+vosk-model/
+vosk-model-pt-br.zip
+vosk-model-small-pt-0.3/
+
+# Arquivos de áudio temporários
+*.wav
+input.wav
+teste.wav
+
+# Histórico e cache de voz
+.history/
+.cache/
+command_history.json
+
+# Logs de execução
+ultron_*.log
+voice_*.log
+
+# Configurações locais
+.env
+.env.local
+config.local.js
+secrets.json
+
+# Diretórios de saída
+output/
+results/
+logs/
+
 # node.js
 #
 node_modules/

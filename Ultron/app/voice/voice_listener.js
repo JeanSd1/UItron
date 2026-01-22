@@ -1,68 +1,135 @@
 /**
- * PASSO 5.1.1 — Voice Listener (Push-to-Talk)
- * 
- * Read-Only Voice Input
- * No continuous listening
- * No auto-execution
- * Audit-grade logging
+ * VOICE LISTENER - Captura com FFmpeg (Windows)
+ * Arquitetura correta para Windows + Node.js
  */
 
+const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const { auditLog } = require('./voice_logger');
 
-class VoiceListener {
-  constructor(config = {}) {
-    this.config = {
-      hotkey: config.hotkey || 'CTRL+SHIFT+V',
-      max_duration_seconds: config.max_duration_seconds || 30,
-      silence_threshold_ms: config.silence_threshold_ms || 1500,
-      min_audio_duration_ms: config.min_audio_duration_ms || 500,
-      sample_rate: 16000,
-      channels: 1,
-      bit_depth: 16
-    };
+let microphoneName = null;
 
-    this.is_listening = false;
-    this.audio_buffer = null;
-    this.start_time = null;
-  }
+/**
+ * Detectar nome do microfone automaticamente
+ */
+async function detectMicrophone() {
+  return new Promise((resolve) => {
+    const ffmpeg = spawn('ffmpeg', [
+      '-list_devices', 'true',
+      '-f', 'dshow',
+      '-i', 'dummy'
+    ]);
 
-  /**
-   * Initialize push-to-talk listener
-   */
-  async initialize() {
+    let output = '';
+    
+    ffmpeg.stderr.on('data', (data) => {
+      output += data.toString();
+    });
+
+    ffmpeg.on('close', () => {
+      const lines = output.split('\n');
+      for (let line of lines) {
+        if (line.includes('audio=')) {
+          const match = line.match(/"([^"]*(?:Microfone|Microphone|Audio)[^"]*)"/i);
+          if (match) {
+            resolve(match[1]);
+            return;
+          }
+        }
+      }
+      resolve('Microfone (Realtek(R) Audio)');
+    });
+  });
+}
+
+/**
+ * Gravar áudio usando FFmpeg
+ */
+async function recordAudio(seconds = 8) {
+  return new Promise(async (resolve, reject) => {
     try {
-      auditLog({
-        event_type: 'voice_listener_init',
-        status: 'initializing',
-        hotkey: this.config.hotkey
+      if (!microphoneName) {
+        microphoneName = await detectMicrophone();
+      }
+
+      const output = path.join(__dirname, 'input.wav');
+
+      if (fs.existsSync(output)) {
+        fs.unlinkSync(output);
+      }
+
+      const ffmpeg = spawn('ffmpeg', [
+        '-y',
+        '-f', 'dshow',
+        '-i', `audio=${microphoneName}`,
+        '-t', String(seconds),
+        '-ac', '1',
+        '-ar', '16000',
+        output
+      ], {
+        stdio: ['pipe', 'pipe', 'pipe']
       });
 
-      // In production: would use native OS APIs (Win32 API for Windows)
-      // For now: simulation + framework ready
-      this.setupHotkeyListener();
+      ffmpeg.stderr.on('data', () => {});
+      ffmpeg.stdout.on('data', () => {});
 
-      auditLog({
-        event_type: 'voice_listener_init',
-        status: 'ready',
-        message: `Listening for hotkey: ${this.config.hotkey}`
+      const timeout = setTimeout(() => {
+        ffmpeg.kill();
+      }, (seconds + 5) * 1000);
+
+      ffmpeg.on('close', (code) => {
+        clearTimeout(timeout);
+        if (fs.existsSync(output) && fs.statSync(output).size > 0) {
+          resolve(output);
+        } else {
+          reject(new Error('Falha ao gravar áudio'));
+        }
       });
 
-      return { success: true, message: 'Voice listener ready' };
-    } catch (err) {
-      auditLog({
-        event_type: 'voice_listener_init',
-        status: 'failed',
-        error: err.message
+      ffmpeg.on('error', (err) => {
+        clearTimeout(timeout);
+        reject(err);
       });
-      return { success: false, error: err.message };
+
+    } catch (e) {
+      reject(e);
     }
-  }
+  });
+}
 
-  /**
-   * Setup hotkey listener (framework only)
-   */
+module.exports = {
+  recordAudio,
+  detectMicrophone
+};
+
+      const timeout = setTimeout(() => {
+        ffmpeg.kill();
+      }, (seconds + 5) * 1000);
+
+      ffmpeg.on('close', (code) => {
+        clearTimeout(timeout);
+        if (fs.existsSync(output) && fs.statSync(output).size > 0) {
+          resolve(output);
+        } else {
+          reject(new Error('Falha ao gravar áudio'));
+        }
+      });
+
+      ffmpeg.on('error', (err) => {
+        clearTimeout(timeout);
+        reject(err);
+      });
+
+    } catch (e) {
+      reject(e);
+    }
+  });
+}
+
+module.exports = {
+  recordAudio,
+  detectMicrophone
+};
   setupHotkeyListener() {
     // Production implementation would use:
     // - node-ffi + Windows API

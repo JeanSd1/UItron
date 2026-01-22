@@ -6,7 +6,13 @@ Sistema inteligente que executa comandos no seu PC por **voz** ou **texto**.
 
 ## 🚀 Início Rápido
 
-### Opção 1: Menu Interativo (MAIS FÁCIL!)
+### Opção 1: Iniciar Ultron (RECOMENDADO!)
+
+```bash
+cd "c:\Users\Lugan\OneDrive\Área de Trabalho\Projeto Ultron\Ultron" ; node ultron-continuo.js
+```
+
+### Opção 2: Menu Interativo
 
 ```bash
 node rodar-teste.js
@@ -18,22 +24,14 @@ Escolha uma opção no menu:
 3. Demonstração de comandos
 4. Sair
 
-### Opção 2: Direto no Ultron
-
-```bash
-cd Ultron
-node ultron-voice-full.js
-```
-
 ---
 
 ## 💬 Como Usar
 
 ### Por VOZ (Microfone)
-1. Pressione **ENTER** no terminal
-2. **FALE** seu comando (ex: "abra novo documento de texto e escreva olá mundo")
-3. Digite **sim** quando pedir autorização
-4. Pronto! ✨
+1. **FALE** seu comando (ex: "abra novo documento de texto e escreva olá mundo")
+2. Digite **sim** quando pedir autorização
+3. Pronto! ✨
 
 ### Por TEXTO (Se microfone não funcionar)
 1. Digite o comando direto no terminal

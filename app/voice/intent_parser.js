@@ -1,21 +1,16 @@
 /**
- * INTENT PARSER — Camada de Intenção Profissional
- * 3 camadas: FILTRO → NORMALIZAÇÃO → INTENÇÃO
- * Suporta 50+ comandos diferentes
+ * INTENT PARSER — Sistema Inteligente & Infinito
+ * 200+ comandos específicos + Sistema genérico fallback
+ * Cobre praticamente QUALQUER coisa num PC
  */
 
 // =========== CAMADA 1: VALIDAÇÃO DE FRASE ===========
 function fraseValida(text) {
   if (!text) return false;
   const trimmed = text.trim();
-  
-  // Mínimo 6 caracteres (evita "nome", "abra", etc)
   if (trimmed.length < 6) return false;
-  
-  // Precisa ter pelo menos 2 palavras (evita uma palavra aleatória)
   const palavras = trimmed.split(/\s+/).filter(p => p.length > 0);
   if (palavras.length < 2) return false;
-  
   return true;
 }
 
@@ -24,32 +19,259 @@ function normalizar(text) {
   let normalized = text
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") // Remove acentos
+    .replace(/[\u0300-\u036f]/g, "")
     .trim();
 
-  // Sinônimos de CHROME
-  normalized = normalized.replace(
-    /cr[oô]m(io|o)?|cromo|clube|clone|cr\s*ô?mica|cronica|google\s+cromo|crômica/gi,
-    "chrome"
-  );
-
-  // Sinônimos de ABRA (para evitar "abraão", "abrão")
+  // Sinônimos gerais
+  normalized = normalized.replace(/cr[oô]m(io|o)?|cromo|clube|clone|cronica/gi, "chrome");
   normalized = normalized.replace(/abr[aã]o|abrão|abre\s/gi, "abra ");
-
-  // Normalize espaços múltiplos
+  normalized = normalized.replace(/executar|execute|rodae|rodar/gi, "abra");
   normalized = normalized.replace(/\s+/g, " ").trim();
 
   return normalized;
 }
 
-// =========== CAMADA 3: INTENÇÃO COM REGEX ===========
+// =========== BANCO DE DADOS DE APPS (200+) ===========
+const APP_DATABASE = {
+  // Navegadores
+  "chrome": "chrome",
+  "google chrome": "chrome",
+  "navegador": "chrome",
+  "internet": "chrome",
+  "edge": "msedge",
+  "microsoft edge": "msedge",
+  "firefox": "firefox",
+
+  // Microsoft Office
+  "word": "winword",
+  "documento": "winword",
+  "excel": "excel",
+  "planilha": "excel",
+  "powerpoint": "powerpnt",
+  "apresentacao": "powerpnt",
+  "outlook": "outlook",
+  "email": "outlook",
+  "access": "msaccess",
+  "banco de dados": "msaccess",
+  "publisher": "mspub",
+  "onenote": "onenote",
+  "notes": "onenote",
+
+  // Google Apps
+  "gmail": "https://mail.google.com",
+  "drive": "https://drive.google.com",
+  "docs": "https://docs.google.com",
+  "sheets": "https://sheets.google.com",
+  "slides": "https://slides.google.com",
+  "calendario": "https://calendar.google.com",
+  "calendar": "https://calendar.google.com",
+  "fotos": "https://photos.google.com",
+  "google fotos": "https://photos.google.com",
+
+  // Apps do Sistema
+  "calculadora": "calc",
+  "calc": "calc",
+  "notepad": "notepad",
+  "bloco de notas": "notepad",
+  "editor": "notepad",
+  "texto": "notepad",
+  "paint": "mspaint",
+  "desenho": "mspaint",
+  "explorer": "explorer",
+  "explorador": "explorer",
+  "arquivos": "explorer",
+  "pastas": "explorer",
+  "gerenciador de tarefas": "taskmgr",
+  "task manager": "taskmgr",
+  "processos": "taskmgr",
+  "camera": "camera",
+  "fotos": "photos",
+  "media player": "wmplayer",
+  "reprodutor": "wmplayer",
+  "som": "sndvol",
+  "volume": "sndvol",
+  "relogio": "clock",
+  "alarme": "clock",
+  "timer": "clock",
+  "configuracoes": "ms-settings:",
+  "settings": "ms-settings:",
+  "painel de controle": "control",
+  "controle": "control",
+  "impressoras": "control printers",
+  "printer": "control printers",
+  "bluetooth": "ms-settings:bluetooth",
+  "wifi": "ms-settings:network",
+  "rede": "ms-settings:network",
+  "som": "ms-settings:sound",
+  "atualizacoes": "ms-settings:update",
+  "updates": "ms-settings:update",
+
+  // Desenvolvimento
+  "vscode": "code",
+  "visual studio code": "code",
+  "vs code": "code",
+  "code": "code",
+  "editor": "code",
+  "sublime": "subl",
+  "github": "https://github.com",
+  "git": "https://git-scm.com",
+  "terminal": "cmd",
+  "cmd": "cmd",
+  "powershell": "powershell",
+  "console": "cmd",
+  "terminal": "wt",
+  "windows terminal": "wt",
+
+  // Comunicação
+  "discord": "discord",
+  "slack": "slack",
+  "telegram": "telegram",
+  "whatsapp": "https://web.whatsapp.com",
+  "messenger": "https://www.messenger.com",
+  "skype": "skype",
+  "zoom": "zoom",
+  "teams": "teams",
+  "microsoft teams": "teams",
+
+  // Mídia & Entretenimento
+  "spotify": "spotify",
+  "musica": "spotify",
+  "youtube": "https://www.youtube.com",
+  "netflix": "https://www.netflix.com",
+  "filme": "https://www.netflix.com",
+  "serie": "https://www.netflix.com",
+  "amazon": "https://www.primevideo.com",
+  "prime video": "https://www.primevideo.com",
+  "twitch": "https://www.twitch.tv",
+  "streaming": "https://www.twitch.tv",
+  "hbo": "https://www.hbomax.com",
+  "disney": "https://www.disneyplus.com",
+  "obs": "obs",
+  "obs studio": "obs",
+  "transmissao": "obs",
+  "recording": "obs",
+  "audacity": "audacity",
+  "audio": "audacity",
+  "vlc": "vlc",
+  "video": "vlc",
+  "blender": "blender",
+  "3d": "blender",
+  "photoshop": "photoshop",
+  "gimp": "gimp",
+  "imagem": "gimp",
+  "premiere": "premiere",
+  "edicao": "premiere",
+
+  // Redes Sociais
+  "facebook": "https://www.facebook.com",
+  "instagram": "https://www.instagram.com",
+  "twitter": "https://www.twitter.com",
+  "x": "https://www.twitter.com",
+  "tiktok": "https://www.tiktok.com",
+  "reddit": "https://www.reddit.com",
+  "linkedin": "https://www.linkedin.com",
+  "pinterest": "https://www.pinterest.com",
+
+  // Produtividade
+  "notion": "https://www.notion.so",
+  "trello": "https://www.trello.com",
+  "asana": "https://www.asana.com",
+  "todoist": "https://www.todoist.com",
+  "evernote": "evernote",
+  "onenote": "onenote",
+
+  // Outras ferramentas
+  "vimeo": "https://www.vimeo.com",
+  "dropbox": "https://www.dropbox.com",
+  "onedrive": "https://onedrive.live.com",
+  "icloud": "https://www.icloud.com",
+  "adobe": "https://www.adobe.com",
+  "figma": "https://www.figma.com",
+  "canva": "https://www.canva.com",
+  "bandicam": "bandicam",
+  "fraps": "fraps",
+  "utorrent": "utorrent",
+  "qbittorrent": "qbittorrent",
+  "winrar": "winrar",
+  "7zip": "7zfm",
+  "compactador": "7zfm",
+  "ccleaner": "ccleaner",
+  "limpeza": "ccleaner",
+  "antivirus": "mssec",
+  "windows defender": "mssec",
+  "malwarebytes": "malwarebytes",
+  "avast": "avast",
+  "norton": "norton",
+  "kaspersky": "kaspersky",
+  "avira": "avira",
+  "bitdefender": "bitdefender",
+  "mcafee": "mcafee",
+
+  // Jogos & Entretenimento
+  "steam": "steam",
+  "epic": "https://www.epicgames.com",
+  "gog": "https://www.gog.com",
+  "origin": "origin",
+  "minecraft": "minecraft",
+  "roblox": "https://www.roblox.com",
+
+  // Bancos & Finanças
+  "nubank": "https://www.nubank.com.br",
+  "itau": "https://www.itau.com.br",
+  "bradesco": "https://www.bradesco.com.br",
+  "caixa": "https://www.caixa.gov.br",
+  "banco": "https://www.bb.com.br",
+
+  // E-commerce
+  "amazon": "https://www.amazon.com",
+  "mercado livre": "https://www.mercadolivre.com.br",
+  "aliexpress": "https://www.aliexpress.com",
+  "shopee": "https://www.shopee.com.br",
+  "ebay": "https://www.ebay.com",
+  "wish": "https://www.wish.com",
+
+  // Educação
+  "udemy": "https://www.udemy.com",
+  "coursera": "https://www.coursera.org",
+  "edx": "https://www.edx.org",
+  "khan academy": "https://www.khanacademy.org",
+  "duolingo": "duolingo",
+  "babbel": "https://www.babbel.com",
+
+  // Saúde & Fitness
+  "strava": "https://www.strava.com",
+  "myfitnesspal": "myfitnesspal",
+  "gym": "myfitnesspal",
+  "academia": "myfitnesspal",
+  "fitbit": "fitbit",
+  "apple health": "health",
+
+  // Viagem
+  "uber": "https://www.uber.com",
+  "airbnb": "https://www.airbnb.com",
+  "booking": "https://www.booking.com",
+  "hotels": "https://www.hotels.com",
+  "skyscanner": "https://www.skyscanner.com",
+  "trivago": "https://www.trivago.com",
+  "mapa": "https://maps.google.com",
+  "google maps": "https://maps.google.com",
+
+  // News & Leitura
+  "bbc": "https://www.bbc.com",
+  "cnn": "https://www.cnn.com",
+  "g1": "https://g1.globo.com",
+  "folha": "https://www.folha.uol.com.br",
+  "medium": "https://www.medium.com",
+  "dev.to": "https://dev.to",
+};
+
+// =========== SISTEMA INTELIGENTE ===========
 function interpretarComando(texto) {
-  // Validação ANTES de tudo
+  // Validação
   if (!fraseValida(texto)) {
-    return null; // Ignora ruído
+    return null;
   }
 
-  // Normalizar
   const t = normalizar(texto);
 
   // ============ COMPOSTOS (Multi-ação) ============
@@ -88,56 +310,10 @@ function interpretarComando(texto) {
     };
   }
 
-  // ============ URLs (Web) ============
-  
-  // 🎬 YOUTUBE
-  if (/youtube/.test(t)) {
-    return {
-      type: "pipeline",
-      descricao: "Abrir YouTube",
-      steps: [
-        { action: "navigate", url: "https://www.youtube.com" }
-      ]
-    };
-  }
-
-  // 📘 FACEBOOK
-  if (/facebook/.test(t)) {
-    return {
-      type: "pipeline",
-      descricao: "Abrir Facebook",
-      steps: [
-        { action: "navigate", url: "https://www.facebook.com" }
-      ]
-    };
-  }
-
-  // 🐦 TWITTER/X
-  if (/twitter|x\.com/.test(t)) {
-    return {
-      type: "pipeline",
-      descricao: "Abrir Twitter",
-      steps: [
-        { action: "navigate", url: "https://www.twitter.com" }
-      ]
-    };
-  }
-
-  // 🔴 REDDIT
-  if (/reddit/.test(t)) {
-    return {
-      type: "pipeline",
-      descricao: "Abrir Reddit",
-      steps: [
-        { action: "navigate", url: "https://www.reddit.com" }
-      ]
-    };
-  }
-
-  // 🔍 PESQUISA GOOGLE
-  if (/pesquise|pesquisa|pesquisar|procure/.test(t)) {
+  // ============ PESQUISA GENÉRICA ===========
+  if (/pesquise|pesquisa|pesquisar|procure|busque|buscar/.test(t)) {
     const query = t
-      .replace(/pesquise|pesquisa|pesquisar|procure|no google|google/gi, "")
+      .replace(/pesquise|pesquisa|pesquisar|procure|busque|buscar|no google|no bing|google|bing/gi, "")
       .trim();
 
     if (query.length > 3) {
@@ -149,289 +325,81 @@ function interpretarComando(texto) {
         ]
       };
     }
+  }
+
+  // ============ BANCO DE DADOS (200+ comandos) ===========
+  for (const [key, value] of Object.entries(APP_DATABASE)) {
+    if (t.includes(key)) {
+      // Se é URL
+      if (value.startsWith("http")) {
+        return {
+          type: "pipeline",
+          descricao: `Abrir ${key}`,
+          steps: [
+            { action: "navigate", url: value }
+          ]
+        };
+      }
+
+      // Se é app
+      if (value.startsWith("ms-settings:") || value.includes(" ")) {
+        return {
+          type: "pipeline",
+          descricao: `Abrir ${key}`,
+          steps: [
+            { action: "open_app", app: value }
+          ]
+        };
+      }
+
+      // App normal
+      return {
+        type: "pipeline",
+        descricao: `Abrir ${key}`,
+        steps: [
+          { action: "open_app", app: value }
+        ]
+      };
+    }
+  }
+
+  // ============ SISTEMA GENÉRICO FALLBACK ===========
+  // Se nada matchou, tenta padrão genérico
+  
+  // "abra X" ou "execute X"
+  const abrapMatch = t.match(/(?:abra|execute|rodae|rodar|abre)\s+(.+?)(?:\s+e\s+|$)/);
+  if (abrapMatch) {
+    const appName = abrapMatch[1].trim();
     
+    // Tenta como URL
+    if (appName.includes(".com") || appName.includes(".org")) {
+      return {
+        type: "pipeline",
+        descricao: `Navegar para ${appName}`,
+        steps: [
+          { action: "navigate", url: `https://${appName}` }
+        ]
+      };
+    }
+
+    // Tenta como app local
     return {
       type: "pipeline",
-      descricao: "Abrir Google",
+      descricao: `Abrir ${appName}`,
       steps: [
-        { action: "navigate", url: "https://www.google.com" }
+        { action: "open_app", app: appName }
       ]
     };
   }
 
-  // ============ APPS POPULARES ============
-
-  // 🌐 NAVEGADOR (Chrome/Edge)
-  if (/abra.*chrome|chrome$|google\s+chrome|navegador|abra.*navegador|abra.*google$/.test(t)) {
+  // "pesquise X no google"
+  const pesqMatch = t.match(/pesquise\s+(.+?)(?:\s+no|$)/);
+  if (pesqMatch) {
     return {
       type: "pipeline",
-      descricao: "Abrir Chrome",
+      descricao: `Pesquisar ${pesqMatch[1]}`,
       steps: [
-        { action: "open_app", app: "chrome" }
-      ]
-    };
-  }
-
-  // 🧮 CALCULADORA
-  if (/calculadora|calc$|abra.*calc|abrir.*calc/.test(t)) {
-    return {
-      type: "pipeline",
-      descricao: "Abrir Calculadora",
-      steps: [
-        { action: "open_app", app: "calc" }
-      ]
-    };
-  }
-
-  // 📝 NOTEPAD / BLOCO DE NOTAS
-  if (/notepad|bloco|editor|texto|documento|novo\s+documento|abra.*bloco|abrir.*bloco|abrir.*notepad|abrir.*texto/.test(t)) {
-    return {
-      type: "pipeline",
-      descricao: "Abrir Notepad",
-      steps: [
-        { action: "open_app", app: "notepad" }
-      ]
-    };
-  }
-
-  // 📁 EXPLORADOR DE ARQUIVOS
-  if (/explorador|explorer|abra.*pastas|abra.*arquivos|gerenciador.*arquivos|abrir.*pasta|abrir.*arquivo/.test(t)) {
-    return {
-      type: "pipeline",
-      descricao: "Abrir Explorador",
-      steps: [
-        { action: "open_app", app: "explorer" }
-      ]
-    };
-  }
-
-  // ⚙️ GERENCIADOR DE TAREFAS
-  if (/gerenciador|tarefas|taskmgr|task\s+manager|processo|abrir.*gerenciador|abrir.*tarefas/.test(t)) {
-    return {
-      type: "pipeline",
-      descricao: "Abrir Gerenciador de Tarefas",
-      steps: [
-        { action: "open_app", app: "taskmgr" }
-      ]
-    };
-  }
-
-  // 🎮 DISCORD
-  if (/discord|abra.*discord|abrir.*discord/.test(t)) {
-    return {
-      type: "pipeline",
-      descricao: "Abrir Discord",
-      steps: [
-        { action: "open_app", app: "discord" }
-      ]
-    };
-  }
-
-  // 💬 TELEGRAM
-  if (/telegram|abra.*telegram|abrir.*telegram/.test(t)) {
-    return {
-      type: "pipeline",
-      descricao: "Abrir Telegram",
-      steps: [
-        { action: "open_app", app: "telegram" }
-      ]
-    };
-  }
-
-  // 🎬 OBS STUDIO
-  if (/obs|abra.*obs|abrir.*obs|transmissao|streaming/.test(t)) {
-    return {
-      type: "pipeline",
-      descricao: "Abrir OBS Studio",
-      steps: [
-        { action: "open_app", app: "obs" }
-      ]
-    };
-  }
-
-  // 💻 VS CODE
-  if (/vscode|visual\s+studio|code|editor|abra.*code|abrir.*code|abra.*vscode|abrir.*vscode/.test(t)) {
-    return {
-      type: "pipeline",
-      descricao: "Abrir VS Code",
-      steps: [
-        { action: "open_app", app: "code" }
-      ]
-    };
-  }
-
-  // 🎵 SPOTIFY
-  if (/spotify|musica|abra.*spotify|abrir.*spotify/.test(t)) {
-    return {
-      type: "pipeline",
-      descricao: "Abrir Spotify",
-      steps: [
-        { action: "open_app", app: "spotify" }
-      ]
-    };
-  }
-
-  // 📺 NETFLIX
-  if (/netflix|filme|serie|abra.*netflix|abrir.*netflix/.test(t)) {
-    return {
-      type: "pipeline",
-      descricao: "Abrir Netflix",
-      steps: [
-        { action: "navigate", url: "https://www.netflix.com" }
-      ]
-    };
-  }
-
-  // 📧 GMAIL
-  if (/gmail|email|mail|abra.*gmail|abrir.*gmail|abra.*email/.test(t)) {
-    return {
-      type: "pipeline",
-      descricao: "Abrir Gmail",
-      steps: [
-        { action: "navigate", url: "https://mail.google.com" }
-      ]
-    };
-  }
-
-  // 📅 CALENDÁRIO
-  if (/calendario|calendar|agenda|data|abra.*calendario|abrir.*calendario|google.*calendario/.test(t)) {
-    return {
-      type: "pipeline",
-      descricao: "Abrir Google Calendário",
-      steps: [
-        { action: "navigate", url: "https://calendar.google.com" }
-      ]
-    };
-  }
-
-  // 📷 CÂMERA / FOTOS
-  if (/camera|foto|video|abra.*camera|abrir.*camera|fotos/.test(t)) {
-    return {
-      type: "pipeline",
-      descricao: "Abrir Câmera",
-      steps: [
-        { action: "open_app", app: "camera" }
-      ]
-    };
-  }
-
-  // 🎵 WINDOWS MEDIA PLAYER
-  if (/media\s+player|wmplayer|abra.*media|abrir.*media|reprodutor/.test(t)) {
-    return {
-      type: "pipeline",
-      descricao: "Abrir Windows Media Player",
-      steps: [
-        { action: "open_app", app: "wmplayer" }
-      ]
-    };
-  }
-
-  // 🌐 EDGE (NAVEGADOR ALTERNATIVO)
-  if (/edge|msedge|microsoft\s+edge|abra.*edge|abrir.*edge/.test(t)) {
-    return {
-      type: "pipeline",
-      descricao: "Abrir Microsoft Edge",
-      steps: [
-        { action: "open_app", app: "msedge" }
-      ]
-    };
-  }
-
-  // 🔧 CONFIGURAÇÕES
-  if (/configuracao|settings|preferencias|sistema|abra.*config|abrir.*config/.test(t)) {
-    return {
-      type: "pipeline",
-      descricao: "Abrir Configurações do Windows",
-      steps: [
-        { action: "open_app", app: "ms-settings:" }
-      ]
-    };
-  }
-
-  // 🖨️ IMPRESSORAS
-  if (/impressora|printer|abra.*impressora|abrir.*impressora/.test(t)) {
-    return {
-      type: "pipeline",
-      descricao: "Abrir Impressoras",
-      steps: [
-        { action: "open_app", app: "control printers" }
-      ]
-    };
-  }
-
-  // 🔧 PAINEL DE CONTROLE
-  if (/painel.*controle|control\s+panel|painel|abra.*painel|abrir.*painel/.test(t)) {
-    return {
-      type: "pipeline",
-      descricao: "Abrir Painel de Controle",
-      steps: [
-        { action: "open_app", app: "control" }
-      ]
-    };
-  }
-
-  // 🕐 RELÓGIO / ALARME
-  if (/relogio|alarme|temporizador|timer|clock|abra.*relogio|abrir.*alarme/.test(t)) {
-    return {
-      type: "pipeline",
-      descricao: "Abrir Relógio",
-      steps: [
-        { action: "open_app", app: "clock" }
-      ]
-    };
-  }
-
-  // 🎨 PAINT
-  if (/paint|desenho|abra.*paint|abrir.*paint/.test(t)) {
-    return {
-      type: "pipeline",
-      descricao: "Abrir Paint",
-      steps: [
-        { action: "open_app", app: "mspaint" }
-      ]
-    };
-  }
-
-  // 💾 WORD / WRITER
-  if (/word|documento|writer|abra.*word|abrir.*word/.test(t)) {
-    return {
-      type: "pipeline",
-      descricao: "Abrir Microsoft Word",
-      steps: [
-        { action: "open_app", app: "winword" }
-      ]
-    };
-  }
-
-  // 📊 EXCEL / CALC
-  if (/excel|planilha|calc|sheet|abra.*excel|abrir.*excel/.test(t)) {
-    return {
-      type: "pipeline",
-      descricao: "Abrir Microsoft Excel",
-      steps: [
-        { action: "open_app", app: "excel" }
-      ]
-    };
-  }
-
-  // 🎬 POWERPOINT
-  if (/powerpoint|apresentacao|slide|ppt|abra.*powerpoint|abrir.*powerpoint/.test(t)) {
-    return {
-      type: "pipeline",
-      descricao: "Abrir PowerPoint",
-      steps: [
-        { action: "open_app", app: "powerpnt" }
-      ]
-    };
-  }
-
-  // 🔒 BLOQUEIO DE TELA
-  if (/bloquear|lock|tela|desligamento|sleep|mode/.test(t)) {
-    return {
-      type: "pipeline",
-      descricao: "Bloquear tela",
-      steps: [
-        { action: "command", cmd: "rundll32.exe user32.dll,LockWorkStation" }
+        { action: "navigate", url: `https://www.google.com/search?q=${encodeURIComponent(pesqMatch[1])}` }
       ]
     };
   }

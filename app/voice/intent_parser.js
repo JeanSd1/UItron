@@ -52,41 +52,85 @@ function interpretarComando(texto) {
   // Normalizar
   const t = normalizar(texto);
 
+  // ============ COMPOSTOS (Multi-ação) ============
+
+  // "abra o chrome e pesquise X"
+  if (/abra.*chrome|navegador/.test(t) && /pesquise|pesquisar|procure/.test(t)) {
+    const query = t
+      .replace(/abra.*chrome|abra.*navegador|pesquise|pesquisar|procure|no google|google/gi, "")
+      .trim();
+
+    return {
+      type: "pipeline",
+      descricao: "Abrir Chrome e pesquisar",
+      steps: [
+        { action: "open_app", app: "chrome" },
+        { action: "wait", ms: 2000 },
+        { action: "navigate", url: `https://www.google.com/search?q=${encodeURIComponent(query)}` }
+      ]
+    };
+  }
+
+  // "abra o bloco e escreva X"
+  if (/abra.*bloco|abra.*notepad/.test(t) && /escreva|escrever|digite|digitar/.test(t)) {
+    const texto = t
+      .replace(/abra.*bloco|abra.*notepad|escreva|escrever|digite|digitar/gi, "")
+      .trim();
+
+    return {
+      type: "pipeline",
+      descricao: "Abrir Notepad e escrever",
+      steps: [
+        { action: "open_app", app: "notepad" },
+        { action: "wait", ms: 1500 },
+        { action: "type", text: texto }
+      ]
+    };
+  }
+
   // ============ URLs (Web) ============
   
   // 🎬 YOUTUBE
   if (/youtube/.test(t)) {
     return {
-      type: "url",
-      value: "https://www.youtube.com",
-      descricao: "YouTube"
+      type: "pipeline",
+      descricao: "Abrir YouTube",
+      steps: [
+        { action: "navigate", url: "https://www.youtube.com" }
+      ]
     };
   }
 
   // 📘 FACEBOOK
   if (/facebook/.test(t)) {
     return {
-      type: "url",
-      value: "https://www.facebook.com",
-      descricao: "Facebook"
+      type: "pipeline",
+      descricao: "Abrir Facebook",
+      steps: [
+        { action: "navigate", url: "https://www.facebook.com" }
+      ]
     };
   }
 
   // 🐦 TWITTER/X
   if (/twitter|x\.com/.test(t)) {
     return {
-      type: "url",
-      value: "https://www.twitter.com",
-      descricao: "Twitter"
+      type: "pipeline",
+      descricao: "Abrir Twitter",
+      steps: [
+        { action: "navigate", url: "https://www.twitter.com" }
+      ]
     };
   }
 
   // 🔴 REDDIT
   if (/reddit/.test(t)) {
     return {
-      type: "url",
-      value: "https://www.reddit.com",
-      descricao: "Reddit"
+      type: "pipeline",
+      descricao: "Abrir Reddit",
+      steps: [
+        { action: "navigate", url: "https://www.reddit.com" }
+      ]
     };
   }
 
@@ -98,100 +142,119 @@ function interpretarComando(texto) {
 
     if (query.length > 3) {
       return {
-        type: "url",
-        value: `https://www.google.com/search?q=${encodeURIComponent(query)}`,
-        descricao: `Pesquisar: ${query}`
+        type: "pipeline",
+        descricao: `Pesquisar: ${query}`,
+        steps: [
+          { action: "navigate", url: `https://www.google.com/search?q=${encodeURIComponent(query)}` }
+        ]
       };
     }
     
-    // Se foi só "pesquise" sem query, abre Google
     return {
-      type: "url",
-      value: "https://www.google.com",
-      descricao: "Google"
+      type: "pipeline",
+      descricao: "Abrir Google",
+      steps: [
+        { action: "navigate", url: "https://www.google.com" }
+      ]
     };
   }
-
-  // ============ APPS (Executáveis) ============
 
   // 🌐 NAVEGADOR (Chrome/Edge) — REGEX FORTE
   if (/abra.*chrome|chrome$|google\s+chrome|navegador|abra.*navegador/.test(t)) {
     return {
-      type: "app",
-      value: "chrome",
-      descricao: "Abrir Chrome"
+      type: "pipeline",
+      descricao: "Abrir Chrome",
+      steps: [
+        { action: "open_app", app: "chrome" }
+      ]
     };
   }
 
   // 🧮 CALCULADORA
   if (/calculadora|abra.*calc|calc$/.test(t)) {
     return {
-      type: "app",
-      value: "calc",
-      descricao: "Abrir Calculadora"
+      type: "pipeline",
+      descricao: "Abrir Calculadora",
+      steps: [
+        { action: "open_app", app: "calc" }
+      ]
     };
   }
 
   // 📝 NOTEPAD
   if (/notepad|bloco|editor|abra.*texto|abra.*bloco/.test(t)) {
     return {
-      type: "app",
-      value: "notepad",
-      descricao: "Abrir Notepad"
+      type: "pipeline",
+      descricao: "Abrir Notepad",
+      steps: [
+        { action: "open_app", app: "notepad" }
+      ]
     };
   }
 
   // 📁 EXPLORADOR
   if (/explorador|explorer|abra.*pastas|abra.*arquivos/.test(t)) {
     return {
-      type: "app",
-      value: "explorer",
-      descricao: "Abrir Explorador"
+      type: "pipeline",
+      descricao: "Abrir Explorador",
+      steps: [
+        { action: "open_app", app: "explorer" }
+      ]
     };
   }
 
   // 🎮 DISCORD
   if (/discord|abra.*discord/.test(t)) {
     return {
-      type: "app",
-      value: "discord",
-      descricao: "Abrir Discord"
+      type: "pipeline",
+      descricao: "Abrir Discord",
+      steps: [
+        { action: "open_app", app: "discord" }
+      ]
     };
   }
 
   // 💬 TELEGRAM
   if (/telegram|abra.*telegram/.test(t)) {
     return {
-      type: "app",
-      value: "telegram",
-      descricao: "Abrir Telegram"
+      type: "pipeline",
+      descricao: "Abrir Telegram",
+      steps: [
+        { action: "open_app", app: "telegram" }
+      ]
     };
   }
 
   // 🎬 OBS (Streaming)
   if (/obs|abra.*obs/.test(t)) {
     return {
-      type: "app",
-      value: "obs",
-      descricao: "Abrir OBS Studio"
+      type: "pipeline",
+      descricao: "Abrir OBS Studio",
+      steps: [
+        { action: "open_app", app: "obs" }
+      ]
     };
   }
 
   // 💻 VSCODE
   if (/vscode|visual\s+studio|abra.*code/.test(t)) {
     return {
-      type: "app",
-      value: "code",
-      descricao: "Abrir VS Code"
+      type: "pipeline",
+      descricao: "Abrir VS Code",
+      steps: [
+        { action: "open_app", app: "code" }
+      ]
     };
   }
 
   // 🎵 SPOTIFY
   if (/spotify|abra.*spotify/.test(t)) {
     return {
-      type: "app",
-      value: "spotify",
-      descricao: "Abrir Spotify"
+      type: "pipeline",
+      descricao: "Abrir Spotify",
+      steps: [
+        { action: "open_app", app: "spotify" }
+      ]
     };
   }
 

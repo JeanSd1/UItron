@@ -12,6 +12,7 @@ const { spawn } = require("child_process");
 const fs = require("fs");
 const vosk = require("vosk");
 const executor = require("./app/voice/executor_robusto");
+const executorGenerico = require("./app/voice/executor_generico");
 const { interpretarComando } = require("./app/voice/intent_parser");
 
 // ================= CONFIG =================
@@ -57,28 +58,50 @@ function processQueue() {
 
 // ================= EXECUTOR NÃO-BLOQUEANTE =================
 function executarComandoAsync(intent, callback) {
-  // Se é intenção parsed
-  if (intent.type === "url") {
-    spawn("cmd", ["/c", "start", "", intent.value], {
-      detached: true,
-      stdio: "ignore",
-      windowsHide: true
-    }).unref();
+  // Se é pipeline (múltiplas ações)
+  if (intent.type === "pipeline" && intent.steps) {
+    console.log(`\n🔄 Executando pipeline: ${intent.descricao}`);
     
-    console.log(`✅ ${intent.descricao}`);
-    callback();
+    executorGenerico.executePipeline(intent.steps)
+      .then((resultado) => {
+        console.log(`\n📊 Pipeline ${resultado.sucesso ? "✅ sucesso" : "⚠️ parcial"} (${resultado.completedSteps}/${resultado.totalSteps} passos)`);
+        callback();
+      })
+      .catch((err) => {
+        console.error(`❌ Erro pipeline:`, err.message);
+        callback();
+      });
+    
     return;
   }
 
-  if (intent.type === "app") {
-    spawn("cmd", ["/c", "start", "", intent.value], {
-      detached: true,
-      stdio: "ignore",
-      windowsHide: true
-    }).unref();
+  // Se é URL simples
+  if (intent.type === "url") {
+    executorGenerico.navigate(intent.value)
+      .then(() => {
+        console.log(`✅ ${intent.descricao}`);
+        callback();
+      })
+      .catch((err) => {
+        console.error(`❌ Erro:`, err.message);
+        callback();
+      });
     
-    console.log(`✅ ${intent.descricao}`);
-    callback();
+    return;
+  }
+
+  // Se é app simples
+  if (intent.type === "app") {
+    executorGenerico.openApp(intent.value)
+      .then(() => {
+        console.log(`✅ ${intent.descricao}`);
+        callback();
+      })
+      .catch((err) => {
+        console.error(`❌ Erro:`, err.message);
+        callback();
+      });
+    
     return;
   }
 

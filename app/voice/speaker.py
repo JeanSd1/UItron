@@ -1,6 +1,7 @@
 """
 Speaker com threading para Windows estável
 TTS roda em background, nunca bloqueia a escuta
+Força SAPI5 para garantir funcionamento
 """
 
 import pyttsx3
@@ -13,7 +14,8 @@ class Speaker:
     """Speaker profissional com TTS em thread separada"""
     
     def __init__(self):
-        self.engine = pyttsx3.init()
+        # ESSENCIAL: Forçar SAPI5 no Windows
+        self.engine = pyttsx3.init(driverName="sapi5")
         self.engine.setProperty("rate", 175)
         self.engine.setProperty("volume", 1.0)
 

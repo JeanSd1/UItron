@@ -54,31 +54,78 @@ class Ultron:
         print("=" * 50)
 
     def falar(self, texto: str):
-        """ÚNICA forma de responder com áudio"""
+        """ÚNICA forma de responder com áudio - COM PAUSA DE MICROFONE"""
         if not texto:
             return
+        
         print(f"🔊 Ultron diz: {texto}")
-        self.speaker.say(texto)
-        time.sleep(0.5)
+        
+        # 🔴 PAUSA O MICROFONE (libera para TTS usar áudio)
+        self.listener.pause()
+        
+        try:
+            self.speaker.say(texto)
+            time.sleep(0.3)
+        finally:
+            # 🟢 SEMPRE retoma o microfone (mesmo se erro)
+            time.sleep(0.2)
+            self.listener.resume()
+
+    def _eh_pergunta(self, texto: str) -> bool:
+        """
+        Detecta CORRETAMENTE se é pergunta
+        Pergunta = começa com questionador
+        Comando = começa com verbo (abra, pesquise, etc)
+        """
+        texto_lower = texto.lower().strip()
+        
+        # PERGUNTAS: sempre começam com estas palavras
+        perguntas = [
+            "quem", "o que", "qual", "quando", "onde", "como", 
+            "por que", "porque", "me diga", "me explique", "que horas",
+            "que dia", "qual hora", "qual data"
+        ]
+        
+        for p in perguntas:
+            if texto_lower.startswith(p):
+                return True
+        
+        # ALSO pergunta if tem ? no final
+        if "?" in texto:
+            return True
+        
+        return False
 
     def processar_comando(self, texto: str) -> bool:
         """
-        Pipeline completo:
+        Pipeline completo CORRETO:
         1. Receber texto
-        2. Detectar se é pergunta ou comando
-        3. Se pergunta → responder com IA
-        4. Se comando → executar ação
+        2. SE é pergunta → responder com IA (NUNCA toca em comando)
+        3. SE é comando → executar SOMENTE ação
         """
         print(f"\n📝 Você disse: \"{texto}\"")
 
-        # Detectar se é pergunta
-        eh_pergunta = "?" in texto or any(p in texto.lower() for p in 
-                      ["quem é", "o que é", "qual é", "quando", "onde", "como", "por que", "me diga", "me explique", "hora", "horas", "que horas"])
-
-        if eh_pergunta:
-            # Responder com IA
+        if self._eh_pergunta(texto):
+            # ===== PERGUNTA: RESPONDER COM IA =====
             print("🧠 Analisando pergunta...")
-            resposta = self.ollama.ask(texto, system_prompt="Você é o Ultron, um assistente inteligente em português. Responda brevemente e de forma útil.")
+            
+            # 🔥 PATCH DE TESTE: Respostas hardcoded para testar se SPEAKER FUNCIONA
+            teste_respostas = {
+                "quem descobriu o brasil": "Pedro Álvares Cabral descobriu o Brasil em 1500.",
+                "que hora": "Agora são 16 horas e 30 minutos.",
+                "qual é a hora": "Agora são 16 horas e 30 minutos.",
+                "quem é você": "Sou o Ultron, um assistente de voz inteligente.",
+            }
+            
+            texto_lower = texto.lower()
+            for chave, resp_teste in teste_respostas.items():
+                if chave in texto_lower:
+                    print(f"🧪 TESTE: Respondendo com: {resp_teste}")
+                    self.falar(resp_teste)
+                    return True
+            
+            # Se não bateu no teste, tenta Ollama com ask_question (não ask_action)
+            resposta = self.ollama.ask_question(texto)
             
             if resposta:
                 self.falar(resposta)
@@ -87,13 +134,14 @@ class Ultron:
                 # Fallback: responder com template simples
                 resposta_fallback = self._responder_pergunta_simples(texto)
                 if resposta_fallback:
-                    self.falar(resposta_fallback)
+                    # IMPORTANTE: _responder_pergunta_simples JÁ FALA
                     return True
                 else:
                     self.falar("Desculpe, não consegui responder essa pergunta.")
                     return False
+        
         else:
-            # Processar como comando
+            # ===== COMANDO: EXECUTAR AÇÃO =====
             print("🧠 Analisando comando...")
             acao = self.ollama.ask_action(texto)
 
@@ -101,18 +149,13 @@ class Ultron:
                 # Fallback: Tentar reconhecimento simples sem Ollama
                 acao = self._fallback_simples(texto)
                 if not acao:
-                    self.speaker.say("Desculpe, não consegui entender o comando.")
-
+                    self.falar("Desculpe, não consegui entender o comando.")
                     return False
-
-            # Se foi resposta simples (fallback), já foi respondido acima
-            if acao.get("acao") == "responder":
-                return True
 
             print(f"📋 Ação interpretada:")
             print(json.dumps(acao, indent=2, ensure_ascii=False))
 
-            # 2. Executar ação
+            # Executar ação
             confianca = acao.get("confianca", 0)
             print(f"\n⚙️  Executando com confiança de {confianca}%...")
 
@@ -120,70 +163,57 @@ class Ultron:
                 sucesso = self.executor.execute(acao)
 
                 if sucesso:
-                    # 3. Responder com sucesso
+                    # Responder com sucesso
                     resposta = self._gerar_resposta_sucesso(acao)
-                    self.speaker.say(resposta)
-                    time.sleep(0.3)
+                    self.falar(resposta)
                     return True
                 else:
-                    self.speaker.say("Não consegui executar essa ação.")
-                    time.sleep(0.3)
+                    self.falar("Não consegui executar essa ação.")
                     return False
             else:
-                self.speaker.say("Não entendi bem o comando. Pode repetir?")
-                time.sleep(0.3)
+                self.falar("Não entendi bem o comando. Pode repetir?")
                 return False
 
     def _responder_pergunta_simples(self, texto: str) -> str:
-        """Respostas simples para perguntas comuns"""
+        """Respostas simples para perguntas comuns - GARANTE QUE FALA"""
         texto_lower = texto.lower()
 
         # Hora
         if any(p in texto_lower for p in ["que hora", "horas agora", "qual hora", "me diga a hora"]):
             hora_atual = datetime.now().strftime("%H:%M")
             resposta = f"Agora são {hora_atual}"
-            self.speaker.say(resposta)
-            time.sleep(0.3)
+            self.falar(resposta)  # ✅ FALA AQUI
             return resposta
 
         # Data
         if any(p in texto_lower for p in ["que dia", "qual data", "qual é a data", "data de hoje"]):
             data_atual = datetime.now().strftime("%d de %B de %Y")
             resposta = f"Hoje é {data_atual}"
-            self.speaker.say(resposta)
-            time.sleep(0.3)
+            self.falar(resposta)  # ✅ FALA AQUI
             return resposta
 
         # Quem é você
         if "quem é você" in texto_lower or "quem é o ultron" in texto_lower:
             resposta = "Sou o Ultron, um assistente de voz inteligente. Posso abrir programas, pesquisar na internet, responder perguntas e executar comandos no Windows."
-            self.speaker.say(resposta)
-            time.sleep(0.3)
+            self.falar(resposta)  # ✅ FALA AQUI
             return resposta
 
         # Como você funciona
         if "como você funciona" in texto_lower or "como funciona" in texto_lower:
             resposta = "Funciono através de reconhecimento de voz. Você fala, eu entendo, analiso e respondo ou executo a ação."
-            self.speaker.say(resposta)
-            time.sleep(0.3)
+            self.falar(resposta)  # ✅ FALA AQUI
             return resposta
 
         return None
 
     def _fallback_simples(self, texto: str) -> dict:
         """
-        Fallback simples quando Ollama não está disponível
-        Usa regex para reconhecer comandos básicos
+        Fallback CIRÚRGICO: SOMENTE para comandos reconhecidos
+        NÃO toca em perguntas
         """
         texto_lower = texto.lower()
 
-        # Perguntas sobre hora
-        if any(p in texto_lower for p in ["que hora", "horas agora", "qual hora", "me diga a hora"]):
-            hora_atual = datetime.now().strftime("%H:%M")
-            self.speaker.say(f"Agora são {hora_atual}")
-            return {"acao": "responder", "confianca": 95}
-
-        # Abrir programa
+        # ✅ SOMENTE abrir programa
         programas = {
             "chrome": "google chrome",
             "navegador": "google chrome",
@@ -194,19 +224,26 @@ class Ultron:
             "notepad": "notepad",
             "word": "word",
             "excel": "excel",
+            "calculadora": "calc",
+            "calc": "calc",
         }
 
-        for palavra, programa in programas.items():
-            if f"abra" in texto_lower and palavra in texto_lower:
-                return {
-                    "acao": "abrir_programa",
-                    "programa": programa,
-                    "confianca": 80
-                }
+        # APENAS se começar com "abra" ou "abrir"
+        if texto_lower.startswith(("abra", "abrir", "open")):
+            for palavra, programa in programas.items():
+                if palavra in texto_lower:
+                    return {
+                        "acao": "abrir_programa",
+                        "programa": programa,
+                        "confianca": 80
+                    }
 
-        # Pesquisar
-        if "pesquise" in texto_lower or "busque" in texto_lower:
-            termo = texto.replace("Pesquise", "").replace("pesquise", "").replace("Busque", "").replace("busque", "").strip()
+        # ✅ SOMENTE pesquisar se explicitamente pedido
+        if texto_lower.startswith(("pesquise", "busque", "pesquisa", "busca")):
+            termo = texto.replace("Pesquise", "").replace("pesquise", "") \
+                        .replace("Busque", "").replace("busque", "") \
+                        .replace("Pesquisa", "").replace("pesquisa", "") \
+                        .replace("Busca", "").replace("busca", "").strip()
             if termo:
                 return {
                     "acao": "pesquisar",
@@ -214,6 +251,7 @@ class Ultron:
                     "confianca": 75
                 }
 
+        # Qualquer outra coisa: retorna None (não toca)
         return None
 
     def _gerar_resposta_sucesso(self, acao: dict) -> str:

@@ -43,6 +43,18 @@ class OllamaClient:
             # Silencioso - deixar o fallback handle
             return None
 
+    def ask_question(self, pergunta: str) -> Optional[str]:
+        """
+        Responde perguntas de conhecimento de forma direta e clara
+        DIFERENTE de ask_action - não tenta interpretar como comando
+        """
+        system_prompt = (
+            "Você é um assistente que responde perguntas de forma direta, clara e curta. "
+            "Não execute ações. Não sugira abrir navegador. "
+            "Apenas responda a pergunta em português."
+        )
+        return self.ask(pergunta, system_prompt)
+
     def ask_json(self, comando: str, system_prompt: Optional[str] = None) -> Optional[Dict[str, Any]]:
         """
         Pede ao modelo para responder em JSON

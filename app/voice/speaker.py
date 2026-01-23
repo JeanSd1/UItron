@@ -20,6 +20,9 @@ class Speaker:
         self.thread.start()
 
     def _run(self):
+        import pythoncom
+        pythoncom.CoInitialize()
+
         while True:
             text = self.queue.get()
             if text:

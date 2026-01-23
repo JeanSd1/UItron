@@ -49,7 +49,8 @@ Add-WindowsCapability -Online -Name "Speech-TextToSpeech-pt-BR~0.0.1.0"
 Depois de reiniciar, abra PowerShell novamente e execute:
 
 ```powershell
-node "C:\Users\Lugan\OneDrive\Área de Trabalho\Projeto Ultron\Ultron\teste-voz-simples.js"
+cd "C:\Users\Lugan\OneDrive\Área de Trabalho\Projeto Ultron\Ultron"
+python app/voice/ultron_main.py
 ```
 
 Você verá:
@@ -73,15 +74,15 @@ Agora teste com o Ultron completo:
 
 ```powershell
 cd "C:\Users\Lugan\OneDrive\Área de Trabalho\Projeto Ultron\Ultron"
-node ultron-voice-full.js
+python app/voice/ultron_main.py
 ```
 
 Você verá:
 ```
-[ENTER para falar ou digite 'sair'] >
+🎤 Ultron está escutando...
 ```
 
-Pressione **ENTER** e fale algo!
+Fale seu comando em Português!
 
 ---
 

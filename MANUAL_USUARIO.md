@@ -24,7 +24,7 @@ cd "C:\Users\Lugan\OneDrive\Área de Trabalho\Projeto Ultron\Ultron"
 ### 3. Inicie o Ultron
 
 ```bash
-node ultron-voice-full.js
+python app/voice/ultron_main.py
 ```
 
 ### ✅ IMPORTANTE: Ultron agora FICA ABERTO!

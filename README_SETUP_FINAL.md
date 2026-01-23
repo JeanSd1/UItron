@@ -78,26 +78,26 @@ Procure por "audio" e anote o nome EXATO do seu microfone.
 
 ## 🚀 Como Usar
 
-### **Iniciar ULTRON — Modo Contínuo (SEM ENTER)**
+### **Iniciar ULTRON — Modo Voz (Python)**
 
 ```powershell
 cd "c:\Users\Lugan\OneDrive\Área de Trabalho\Projeto Ultron\Ultron"
-node ultron-continuo.js
+python app/voice/ultron_main.py
 ```
 
 **Como usar:**
-1. Programa inicia e aguarda
-2. Fale: **"Oi Ultron"** ou qualquer comando
-3. Ultron executa
+1. Programa inicia e fica escutando
+2. Fale seus comandos em Português
+3. Ultron reconhece e responde por voz
 4. Aguarda próximo comando
 
 **Exemplos de comandos:**
+- `"qual é a hora"`
 - `"abra a calculadora"`
 - `"abra o chrome"`
-- `"qual é a hora"`
-- `"abra o notepad"`
+- `"qual é a data"`
 
-### **Iniciar ULTRON — Modo Interativo (COM ENTER)**
+### **Verificar Instalação da Voz**
 
 ```powershell
 cd "c:\Users\Lugan\OneDrive\Área de Trabalho\Projeto Ultron\Ultron"

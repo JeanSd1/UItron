@@ -10,11 +10,11 @@ Sistema inteligente que executa comandos no seu PC por **voz** ou **texto** em P
 
 ### ⚡ Executar Ultron Agora
 
-Abra o PowerShell ou CMD e execute:
+Abra o PowerShell e execute:
 
 ```powershell
 cd "c:\Users\Lugan\OneDrive\Área de Trabalho\Projeto Ultron\Ultron"
-node ultron-continuo.js
+python app/voice/ultron_main.py
 ```
 
 **Pronto!** Ultron está escutando. Diga seus comandos em Português.
@@ -44,9 +44,8 @@ node ultron-continuo.js
 Se o microfone não funcionar, use a alternativa com texto:
 
 ```powershell
-cd "c:\Users\Lugan\OneDrive\Área de Trabalho\Projeto Ultron"
-node rodar-teste.js
-# Selecione opção 2: "Teste rápido do seu comando"
+cd "c:\Users\Lugan\OneDrive\Área de Trabalho\Projeto Ultron\Ultron"
+python app/voice/ultron_main.py
 ```
 
 ---

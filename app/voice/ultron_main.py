@@ -58,17 +58,14 @@ class Ultron:
         if not texto:
             return
         
-        print(f"🔊 Ultron diz: {texto}")
-        
         # 🔴 PAUSA O MICROFONE (libera para TTS usar áudio)
         self.listener.pause()
         
         try:
-            self.speaker.say(texto)
-            time.sleep(0.3)
+            self.speaker.say(texto)  # Speaker printa e trata fila
+            time.sleep(0.5)
         finally:
             # 🟢 SEMPRE retoma o microfone (mesmo se erro)
-            time.sleep(0.2)
             self.listener.resume()
 
     def _eh_pergunta(self, texto: str) -> bool:
@@ -77,7 +74,13 @@ class Ultron:
         Pergunta = começa com questionador
         Comando = começa com verbo (abra, pesquise, etc)
         """
+        if not texto or not isinstance(texto, str):
+            return False
+        
         texto_lower = texto.lower().strip()
+        
+        if not texto_lower:
+            return False
         
         # PERGUNTAS: sempre começam com estas palavras
         perguntas = [
@@ -286,11 +289,16 @@ class Ultron:
         try:
             for texto in self.listener.listen():
                 try:
-                    # PROTEÇÃO: Skip se texto for None ou vazio
-                    if not texto or texto.strip() == "":
+                    # 🔴 VALIDAÇÃO OBRIGATÓRIA: Se vazio ou None, pula
+                    if not texto or not isinstance(texto, str):
                         continue
                     
+                    if texto.strip() == "":
+                        continue
+                    
+                    # 🟢 SÓ AQUI processa (garantido: texto é string válido)
                     self.processar_comando(texto)
+                    
                 except KeyboardInterrupt:
                     break
                 except Exception as e:

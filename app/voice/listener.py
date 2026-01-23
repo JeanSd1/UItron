@@ -76,17 +76,17 @@ class Listener:
         
         except sr.UnknownValueError:
             print("❌ Não entendi")
-            return None
+            return ""  # ✅ NUNCA None
         except sr.RequestError:
             print("⚠️ API erro")
             time.sleep(0.5)
-            return None
+            return ""  # ✅ NUNCA None
         except Exception as e:
             if "Stream closed" in str(e) or "-9988" in str(e):
-                return None
+                return ""  # ✅ NUNCA None
             print(f"⚠️ {str(e)[:30]}")
             time.sleep(0.5)
-            return None
+            return ""  # ✅ NUNCA None
 
     def listen(self):
         """Escuta continuamente (generator) - libera mic entre ciclos"""

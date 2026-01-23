@@ -24,6 +24,7 @@ class Listener:
         self.recognizer.pause_threshold = 0.8
         
         self.microphone = None
+        self.active = True  # Flag para pause/resume
         self._init_microphone()
 
     def _init_microphone(self):
@@ -56,6 +57,10 @@ class Listener:
 
     def listen_once(self):
         """Escuta uma vez e retorna o texto"""
+        # Se pausado, pula
+        if not self.active:
+            return None
+        
         try:
             with self.microphone as source:
                 print("🎤 Escutando...", end=" ", flush=True)
@@ -92,6 +97,14 @@ class Listener:
                     yield texto
         except KeyboardInterrupt:
             print("\n\n👋 Encerrado")
+
+    def pause(self):
+        """Pausar escuta (liberar microfone para TTS)"""
+        self.active = False
+
+    def resume(self):
+        """Retomar escuta"""
+        self.active = True
 
 
 if __name__ == '__main__':

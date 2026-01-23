@@ -47,8 +47,10 @@ class Ultron:
         self.ollama = OllamaClient()
 
         # Teste inicial de voz
+        self.listener.pause()
         self.speaker.say("Olá. Eu sou o Ultron. Pronto para obedecer.")
         time.sleep(0.5)
+        self.listener.resume()
 
         print("✅ Ultron inicializado com sucesso!")
         print("=" * 50)
@@ -74,8 +76,10 @@ class Ultron:
             
             if resposta:
                 print(f"💬 Resposta: {resposta}")
+                self.listener.pause()
                 self.speaker.say(resposta)
                 time.sleep(0.3)
+                self.listener.resume()
                 return True
             else:
                 # Fallback: responder com template simples
@@ -84,8 +88,10 @@ class Ultron:
                     print(f"💬 Resposta: {resposta_fallback}")
                     return True
                 else:
+                    self.listener.pause()
                     self.speaker.say("Desculpe, não consegui responder essa pergunta.")
                     time.sleep(0.3)
+                    self.listener.resume()
                     return False
         else:
             # Processar como comando
@@ -96,8 +102,10 @@ class Ultron:
                 # Fallback: Tentar reconhecimento simples sem Ollama
                 acao = self._fallback_simples(texto)
                 if not acao:
+                    self.listener.pause()
                     self.speaker.say("Desculpe, não consegui entender o comando.")
                     time.sleep(0.3)
+                    self.listener.resume()
                     return False
 
             # Se foi resposta simples (fallback), já foi respondido acima
@@ -230,7 +238,9 @@ class Ultron:
         Escuta continuamente e processa comandos
         """
         print("\n" + "=" * 50)
+        self.listener.pause()
         self.speaker.say("Olá. Eu sou o Ultron. Pronto para obedecer.")
+        self.listener.resume()
         print("=" * 50)
         print("\n💡 DICA: Fale naturalmente. Exemplos:")
         print("  - 'Abra o Google Chrome'")
@@ -252,13 +262,17 @@ class Ultron:
                     break
                 except Exception as e:
                     print(f"❌ Erro ao processar: {e}")
+                    self.listener.pause()
                     self.speaker.say("Ocorreu um erro. Repita o comando.")
                     time.sleep(0.3)
+                    self.listener.resume()
 
         except KeyboardInterrupt:
             print("\n\n" + "=" * 50)
+            self.listener.pause()
             self.speaker.say("Até logo!")
             time.sleep(0.3)
+            self.listener.resume()
             print("👋 Ultron desligado")
             print("=" * 50)
 

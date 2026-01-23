@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "missions": {
+    "check_health": {
+      "authorized": 10,
+      "denied": 0,
+      "confidence": 1,
+      "total_samples": 10
+    },
+    "cleanup_system": {
+      "authorized": 7,
+      "denied": 2,
+      "confidence": 0.78,
+      "total_samples": 9
+    }
+  },
+  "time_preferences": {},
+  "preferences": {
+    "notification_window": {
+      "start": "09:00",
+      "end": "22:00"
+    },
+    "silent_hours": {
+      "enabled": true,
+      "start": "22:00",
+      "end": "09:00"
+    },
+    "timezone": "local"
+  },
+  "cooldown_multiplier": 1,
+  "updated_at": "2026-01-21T16:44:45.910Z"
+}

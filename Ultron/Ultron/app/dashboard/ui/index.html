@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultron Dashboard — Observabilidade</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-content">
+                <h1>🔍 Ultron Dashboard</h1>
+                <p>Observabilidade em Tempo Real (Somente Leitura)</p>
+            </div>
+            <div class="header-status" id="healthStatus">
+                <span class="status-dot"></span>
+                <span id="statusText">Conectando...</span>
+            </div>
+        </header>
+
+        <!-- Controls -->
+        <section class="dashboard-controls">
+            <div class="control-group">
+                <label for="missionFilter">Filtrar por Missão:</label>
+                <select id="missionFilter" onchange="applyFilters()">
+                    <option value="">Todas</option>
+                    <option value="cleanup_system">cleanup_system</option>
+                    <option value="check_health">check_health</option>
+                    <option value="analyze_logs">analyze_logs</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="sinceFilter">Desde (Data):</label>
+                <input type="date" id="sinceFilter" onchange="applyFilters()">
+            </div>
+
+            <div class="control-group">
+                <label for="limitFilter">Limite (Timeline):</label>
+                <input type="number" id="limitFilter" value="20" min="1" max="100" onchange="applyFilters()">
+            </div>
+
+            <div class="control-group">
+                <button class="btn btn-primary" onclick="applyFilters()">Atualizar</button>
+                <button class="btn btn-secondary" onclick="resetFilters()">Limpar Filtros</button>
+                <button class="btn btn-export" onclick="exportData()">⬇️ Exportar CSV</button>
+            </div>
+        </section>
+
+        <!-- Views Container -->
+        <main class="dashboard-views">
+            <!-- View 1: Resumo Geral -->
+            <section class="view view-summary">
+                <h2>📊 Resumo Geral</h2>
+                <div id="summaryContent" class="content-loading">Carregando...</div>
+            </section>
+
+            <!-- View 2: Por Missão -->
+            <section class="view view-missions">
+                <h2>🎯 Métricas por Missão</h2>
+                <div id="missionsContent" class="content-loading">Carregando...</div>
+            </section>
+
+            <!-- View 3: Linha do Tempo -->
+            <section class="view view-timeline">
+                <h2>⏱️ Linha do Tempo</h2>
+                <div id="timelineContent" class="content-loading">Carregando...</div>
+            </section>
+
+            <!-- View 4: Explicações de Decisão -->
+            <section class="view view-decisions">
+                <h2>💡 Explicações de Decisão</h2>
+                <div id="decisionsContent" class="content-loading">Carregando...</div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="dashboard-footer">
+            <p>Dashboard Ultron v4.4.5 — Modo Observabilidade (Audit-Grade, Read-Only)</p>
+            <p id="lastUpdate">Última atualização: ---</p>
+        </footer>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>

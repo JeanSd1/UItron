@@ -27,7 +27,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from listener import Listener
 from executor import Executor
-from speaker import Speaker
+from speaker import Speaker, get_speaker
 from ollama_client import OllamaClient
 
 
@@ -43,7 +43,7 @@ class Ultron:
 
         self.listener = Listener(model_path)
         self.executor = Executor()
-        self.speaker = Speaker()
+        self.speaker = get_speaker()  # SINGLETON: sempre a mesma instância
         self.ollama = OllamaClient()
 
         # Teste inicial de voz

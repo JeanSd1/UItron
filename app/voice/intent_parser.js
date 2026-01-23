@@ -8,9 +8,18 @@
 function fraseValida(text) {
   if (!text) return false;
   const trimmed = text.trim();
+  const normalized = normalizar(trimmed);
+  
+  // Padrões conhecidos - aceita mesmo que curta
+  if (/^(abra|pesquise|busque|execute|abre|rodae|rodar)\s+/.test(normalized)) {
+    return true; // Validado - é um padrão conhecido
+  }
+  
+  // Validação normal
   if (trimmed.length < 6) return false;
   const palavras = trimmed.split(/\s+/).filter(p => p.length > 0);
   if (palavras.length < 2) return false;
+  
   return true;
 }
 
@@ -293,21 +302,51 @@ function interpretarComando(texto) {
     };
   }
 
-  // "abra o bloco e escreva X"
-  if (/abra.*bloco|abra.*notepad/.test(t) && /escreva|escrever|digite|digitar/.test(t)) {
-    const texto = t
-      .replace(/abra.*bloco|abra.*notepad|escreva|escrever|digite|digitar/gi, "")
-      .trim();
+  // "bloco de notas escreva X" OU "o bloco escreva X" OU "escreva no bloco X"
+  // Padrão mais flexível para capturar o texto depois de "escreva/digite"
+  if ((/bloco|notepad/.test(t)) && (/escreva|escrever|digite|digitar|escriba/.test(t))) {
+    // Remove tudo até e incluindo a palavra "escreva/digite"
+    let texto = t.replace(/^.*?(escreva|escrever|digite|digitar|escriba)\s+/i, "").trim();
+    
+    // Se ficou vazio, tenta extrair de outra forma
+    if (!texto || texto.length < 2) {
+      texto = t
+        .replace(/(?:abra|o|a)?\s*(?:bloco|notepad|bloco\s+de\s+notas)\s*/gi, "")
+        .replace(/(?:escreva|escrever|digite|digitar|escriba)\s*/gi, "")
+        .trim();
+    }
 
-    return {
-      type: "pipeline",
-      descricao: "Abrir Notepad e escrever",
-      steps: [
-        { action: "open_app", app: "notepad" },
-        { action: "wait", ms: 1500 },
-        { action: "type", text: texto }
-      ]
-    };
+    if (texto && texto.length > 0) {
+      return {
+        type: "pipeline",
+        descricao: "Abrir Notepad e escrever",
+        steps: [
+          { action: "open_app", app: "notepad" },
+          { action: "wait", ms: 3000 },
+          { action: "type", text: texto }
+        ]
+      };
+    }
+  }
+
+  // Padrão genérico: "escreva no [app] X" ou "digite no [app] X"
+  const writeMatch = t.match(/(?:escreva|digite|type|escrever|digitar)\s+(?:no|em|a)\s+(\w+(?:\s+\w+)*?)\s+(.+)/);
+  if (writeMatch) {
+    const appName = writeMatch[1].trim();
+    const textToWrite = writeMatch[2].trim();
+    const appKey = findAppInDatabase(appName);
+    
+    if (appKey && !appKey.startsWith("http")) {
+      return {
+        type: "pipeline",
+        descricao: `Escrever "${textToWrite}" no ${appName}`,
+        steps: [
+          { action: "open_app", app: appKey },
+          { action: "wait", ms: 3000 },
+          { action: "type", text: textToWrite }
+        ]
+      };
+    }
   }
 
   // ============ PESQUISA GENÉRICA ===========
@@ -405,6 +444,17 @@ function interpretarComando(texto) {
   }
 
   // Sem match
+  return null;
+}
+
+// =========== HELPER: Procurar app no banco ===========
+function findAppInDatabase(appName) {
+  const normalized = normalizar(appName);
+  for (const [key, value] of Object.entries(APP_DATABASE)) {
+    if (key.includes(normalized) || normalized.includes(key)) {
+      return value;
+    }
+  }
   return null;
 }
 

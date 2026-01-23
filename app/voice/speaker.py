@@ -1,12 +1,16 @@
 """
-Speaker com fila + thread daemon
-TTS sempre roda em background sem interferência
+Speaker singleton com fila + threading + COM
+UMA ÚNICA instância de TTS em todo o programa
 """
 
 import pyttsx3
 import threading
 import queue
 import time
+
+# SINGLETON: Instância ÚNICA do Speaker
+_speaker_instance = None
+_speaker_lock = threading.Lock()
 
 
 class Speaker:
@@ -35,9 +39,13 @@ class Speaker:
         self.queue.put(text)
 
 
-if __name__ == "__main__":
-    speaker = Speaker()
-    speaker.say("Teste um")
-    time.sleep(1)
-    speaker.say("Teste dois")
-    time.sleep(1)
+def get_speaker():
+    """Retorna a ÚNICA instância de Speaker do programa"""
+    global _speaker_instance
+    
+    if _speaker_instance is None:
+        with _speaker_lock:
+            if _speaker_instance is None:
+                _speaker_instance = Speaker()
+    
+    return _speaker_instance

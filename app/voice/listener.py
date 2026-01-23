@@ -86,13 +86,14 @@ class Listener:
             return None
 
     def listen(self):
-        """Escuta continuamente (generator)"""
+        """Escuta continuamente (generator) - libera mic entre ciclos"""
         print('🎙️ Ultron escutando continuamente...')
         print("   Fale algo em português...\n")
         
         try:
             while True:
                 texto = self.listen_once()
+                time.sleep(0.2)  # CRÍTICO: libera microfone entre ciclos
                 if texto:
                     yield texto
         except KeyboardInterrupt:

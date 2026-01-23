@@ -257,7 +257,7 @@ class Ultron:
                     break
                 except Exception as e:
                     print(f"❌ Erro ao processar: {e}")
-                    self.speaker.say("Ocorreu um erro. Repita o comando.")
+                    self.falar("Ocorreu um erro. Repita o comando.")
 
 
         except KeyboardInterrupt:

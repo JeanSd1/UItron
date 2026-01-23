@@ -1,7 +1,7 @@
 """
-Speaker com threading para Windows estável
-TTS roda em background, nunca bloqueia a escuta
-Força SAPI5 para garantir funcionamento
+Speaker com threading persistente para Windows
+Thread NÃO daemon - garante que TTS sempre executa
+Fila serializada - nenhuma frase é perdida
 """
 
 import pyttsx3
@@ -11,47 +11,39 @@ import time
 
 
 class Speaker:
-    """Speaker profissional com TTS em thread separada"""
-    
     def __init__(self):
-        # ESSENCIAL: Forçar SAPI5 no Windows
         self.engine = pyttsx3.init(driverName="sapi5")
-        self.engine.setProperty("rate", 175)
-        self.engine.setProperty("volume", 1.0)
+        self.engine.setProperty("rate", 180)
 
-        # Tentar voz PT-BR
-        voices = self.engine.getProperty("voices")
-        for voice in voices:
-            if "brazil" in voice.name.lower() or "portuguese" in voice.name.lower():
-                self.engine.setProperty("voice", voice.id)
-                break
-
-        # Fila e thread para TTS
         self.queue = queue.Queue()
-        self.thread = threading.Thread(target=self._tts_loop, daemon=True)
+        self.running = True
+
+        # CRÍTICO: daemon=False garante que o thread vive
+        self.thread = threading.Thread(target=self._run, daemon=False)
         self.thread.start()
 
-    def _tts_loop(self):
-        """Loop em thread separada que processa fila de voz"""
-        while True:
+    def _run(self):
+        """Loop persistente que processa fila de voz"""
+        while self.running:
             try:
-                text = self.queue.get(timeout=1)
-                if text:
-                    self.engine.say(text)
-                    self.engine.runAndWait()
+                text = self.queue.get(timeout=0.1)
             except queue.Empty:
                 continue
-            except Exception as e:
-                print(f"⚠️ Erro TTS: {e}")
+
+            if text:
+                self.engine.say(text)
+                self.engine.runAndWait()
 
     def say(self, text: str):
-        """Enfileira texto para falar (não bloqueia)"""
-        print(f"🔊 Ultron diz: {text}")
-        self.queue.put(text)
+        """Enfileira texto para falar"""
+        if text:
+            print(f"🔊 Ultron diz: {text}")
+            self.queue.put(text)
 
-    def wait_speaking(self):
-        """Espera até terminar todas as falas"""
-        self.queue.join()
+    def stop(self):
+        """Para o thread de forma segura"""
+        self.running = False
+        time.sleep(0.2)
 
 
 # Instância global
@@ -66,4 +58,5 @@ def speak(text: str):
 if __name__ == "__main__":
     speaker = Speaker()
     speaker.say("Olá. Eu sou o Ultron. Sistema online.")
-    speaker.wait_speaking()
+    time.sleep(2)
+    speaker.stop()

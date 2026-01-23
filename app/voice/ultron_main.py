@@ -53,6 +53,14 @@ class Ultron:
         print("✅ Ultron inicializado com sucesso!")
         print("=" * 50)
 
+    def falar(self, texto: str):
+        """ÚNICA forma de responder com áudio"""
+        if not texto:
+            return
+        print(f"🔊 Ultron diz: {texto}")
+        self.speaker.say(texto)
+        time.sleep(3)
+
     def processar_comando(self, texto: str) -> bool:
         """
         Pipeline completo:
@@ -65,7 +73,7 @@ class Ultron:
 
         # Detectar se é pergunta
         eh_pergunta = "?" in texto or any(p in texto.lower() for p in 
-                      ["quem é", "o que é", "qual é", "quando", "onde", "como", "por que", "me diga", "me explique"])
+                      ["quem é", "o que é", "qual é", "quando", "onde", "como", "por que", "me diga", "me explique", "hora", "horas", "que horas"])
 
         if eh_pergunta:
             # Responder com IA
@@ -73,19 +81,16 @@ class Ultron:
             resposta = self.ollama.ask(texto, system_prompt="Você é o Ultron, um assistente inteligente em português. Responda brevemente e de forma útil.")
             
             if resposta:
-                print(f"💬 Resposta: {resposta}")
-                self.speaker.say(resposta)
-                time.sleep(3)
+                self.falar(resposta)
                 return True
             else:
                 # Fallback: responder com template simples
                 resposta_fallback = self._responder_pergunta_simples(texto)
                 if resposta_fallback:
-                    print(f"💬 Resposta: {resposta_fallback}")
+                    self.falar(resposta_fallback)
                     return True
                 else:
-                    self.speaker.say("Desculpe, não consegui responder essa pergunta.")
-                    time.sleep(3)
+                    self.falar("Desculpe, não consegui responder essa pergunta.")
                     return False
         else:
             # Processar como comando
@@ -97,7 +102,7 @@ class Ultron:
                 acao = self._fallback_simples(texto)
                 if not acao:
                     self.speaker.say("Desculpe, não consegui entender o comando.")
-                    time.sleep(3)
+
                     return False
 
             # Se foi resposta simples (fallback), já foi respondido acima
@@ -230,8 +235,7 @@ class Ultron:
         Escuta continuamente e processa comandos
         """
         print("\n" + "=" * 50)
-        self.speaker.say("Olá. Eu sou o Ultron. Pronto para obedecer.")
-        time.sleep(3)
+        self.falar("Olá. Eu sou o Ultron. Pronto para obedecer.")
         print("=" * 50)
         print("\n💡 DICA: Fale naturalmente. Exemplos:")
         print("  - 'Abra o Google Chrome'")
@@ -254,12 +258,11 @@ class Ultron:
                 except Exception as e:
                     print(f"❌ Erro ao processar: {e}")
                     self.speaker.say("Ocorreu um erro. Repita o comando.")
-                    time.sleep(3)
+
 
         except KeyboardInterrupt:
             print("\n\n" + "=" * 50)
-            self.speaker.say("Até logo!")
-            time.sleep(2)
+            self.falar("Até logo!")
             print("👋 Ultron desligado")
             print("=" * 50)
 

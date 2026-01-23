@@ -243,6 +243,10 @@ class Ultron:
         try:
             for texto in self.listener.listen():
                 try:
+                    # PROTEÇÃO: Skip se texto for None ou vazio
+                    if not texto or texto.strip() == "":
+                        continue
+                    
                     self.processar_comando(texto)
                 except KeyboardInterrupt:
                     break

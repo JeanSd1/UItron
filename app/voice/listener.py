@@ -50,10 +50,13 @@ class Listener:
         print("   ✓ Microfone detectado")
         
         # Calibração única
-        with self.microphone as source:
-            print("🔊 Calibrando...", end=" ", flush=True)
-            self.recognizer.adjust_for_ambient_noise(source, duration=0.5)
-            print("✅")
+        try:
+            with self.microphone as source:
+                print("🔊 Calibrando...", end=" ", flush=True)
+                self.recognizer.adjust_for_ambient_noise(source, duration=0.5)
+                print("✅")
+        except Exception as e:
+            print(f"⚠️ Erro na calibração: {e}")
 
     def listen_once(self):
         """Escuta uma vez e retorna o texto"""

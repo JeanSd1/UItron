@@ -59,7 +59,7 @@ class Ultron:
             return
         print(f"🔊 Ultron diz: {texto}")
         self.speaker.say(texto)
-        time.sleep(3)
+        time.sleep(0.5)
 
     def processar_comando(self, texto: str) -> bool:
         """
